@@ -1,7 +1,7 @@
 <?php 
-require_once ('Cheats.php');
-require_once ('ServerList.php');
-require_once ('HWID.php');
+require_once ('/CheatList.php');
+require_once ('/ServerList.php');
+require_once ('/HWID.php');
 
 function url(){
   return sprintf(
