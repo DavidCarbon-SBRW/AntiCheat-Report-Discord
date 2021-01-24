@@ -1,4 +1,7 @@
 <?php 
+require_once ('Cheats.php');
+require_once ('ServerList.php');
+require_once ('HWID.php');
 
 function url(){
   return sprintf(
@@ -22,17 +25,21 @@ $url_components = parse_url(url());
 parse_str($url_components['query'], $params); 
 
 // Replace the URL with your own webhook url
-$discordWebhookURL = "https://discord.com/api/";
+$discordWebhookURL = DiscordChannelHook($params['serverip']);
+
+$nameOfCheat = CheatType($params['cheat_type']);
+
+$hwidNullCheck = IsHWIDNull($params['hwid']);
 
 $hookObject = json_encode([
     /*
      * The general "message" shown above your embeds
      */
-    "content" => "A message will go here",
+    "content" => "",
     /*
      * The username shown in the message
      */
-    "username" => "MyUsername",
+    "username" => "Anti-Cheat",
     /*
      * The image location for the senders image
      */
@@ -60,7 +67,7 @@ $hookObject = json_encode([
             "type" => "rich",
 
             // A description for your embed
-            "description" => "",
+            "description" => "Test",
 
             // The URL of where your title will be a link to
             "url" => "https://www.google.com/",
@@ -91,28 +98,40 @@ $hookObject = json_encode([
 
             // Author object
             "author" => [
-                "name" => "Alphabet",
-                "url" => "https://www.abc.xyz"
+                "name" => "Powered by DavidCarbon",
+                "url" => "https://davidcarbon.dev"
             ],
 
             // Field array of objects
             "fields" => [
-                // Field 1
+                // Field 4
                 [
-                    "name" => "Data A",
-                    "value" => "Value A",
+                    "name" => "CHEAT",
+                    "value" => $nameOfCheat,
                     "inline" => false
-                ],
-                // Field 2
-                [
-                    "name" => "Data B",
-                    "value" => "Value B",
-                    "inline" => true
                 ],
                 // Field 3
                 [
-                    "name" => "Data C",
-                    "value" => "Value C",
+                    "name" => "EVENT-ID",
+                    "value" => $params['event_session'],
+                    "inline" => false
+                ],
+                // Field 1
+                [
+                    "name" => "PERSONA",
+                    "value" => $params['persona_name'],
+                    "inline" => true
+                ],
+                // Field 2
+                [
+                    "name" => "USER-ID",
+                    "value" => $params['user_id'],
+                    "inline" => true
+                ],
+                // Field 2
+                [
+                    "name" => "HWID",
+                    "value" => $hwidNullCheck,
                     "inline" => true
                 ]
             ]
@@ -134,6 +153,6 @@ $response = curl_exec( $ch );
 curl_close( $ch );
   
 // Display result 
-echo ' Thanks for the Report! '; 
+echo ' DavidCarbon was Here! '; 
 
 ?>
