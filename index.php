@@ -15,95 +15,14 @@ echo url();
 // Use parse_url() function to parse the URL 
 // and return an associative array which 
 // contains its various components 
-//$url_components = parse_url("https://blog.davidcarbon.dev/report?serverip=worldonline.pl&user_id=91977&persona_name=DavidCarbon&event_session=502&cheat_type=0&hwid=AE2B21EA65C367A152F41137E33A3836FF938497"); 
-
 $url_components = parse_url(url()); 
 
 // Use parse_str() function to parse the 
 // string passed via URL 
 parse_str($url_components['query'], $params); 
 
-// Display result 
-echo ' Hi '.$params['serverip'].$params['user_id'].$params['persona_name'].$params['event_session'].$params['cheat_type'].$params['hwid']; 
-
 // Replace the URL with your own webhook url
-$discordWebhookURL = "https://discord.com/api/webhooks/";
-
-$nameOfCheat = "ERROR"; 
-
-function whichDiscord(){
-        
-    if($params['serverip'] != null){
-        
-        global $discordWebhookURL;
-        
-        if($params['serverip'] == "worldonline.pl") {
-            //WorldOnline Beta
-            $discordWebhookURL = "https://discord.com/api/";
-        }
-        elseif($params['serverip'] == "game.worldunited.gg") {
-            //WorldUnited.GG
-            $discordWebhookURL = "https://discord.com/api/";
-        }
-        elseif($params['serverip'] == "horizon.nightriderz.world") {
-            //NightRiderz
-            $discordWebhookURL = "https://discord.com/api/";
-        }
-        elseif($params['serverip'] == "92.63.111.195") {
-            //World Evolved
-            $discordWebhookURL = "https://discord.com/api/";
-        }
-        elseif($params['serverip'] == "155.138.131.23") {
-            //Underground Stage
-            $discordWebhookURL = "https://discord.com/api/";
-        }
-        elseif($params['serverip'] == "core.sparkserver.io") {
-            //Freeroam SparkServer
-            $discordWebhookURL = "https://discord.com/api/";
-        }
-        else {
-            $discordWebhookURL = "https://discord.com/api/";
-        } 
-    }
-        
-    if($params['cheat_type'] != null){
-        
-        global $nameOfCheat;
-        
-       if ($params['cheat_type'] == "1"){
-            $nameOfCheat = "MultiHack";
-        }
-	   elseif ($params['cheat_type'] == "2") {
-            $nameOfCheat = "Fast Powerups";
-        }
-	   elseif ($params['cheat_type'] == "4") {
-            $nameOfCheat = "SpeedHack";
-        }
-	   elseif ($params['cheat_type'] == "8") {
-            $nameOfCheat = "Smooth Walls";
-        }
-	   elseif ($params['cheat_type'] == "16") {
-            $nameOfCheat = "Tanks Mode";
-        }
-	   elseif ($params['cheat_type'] == "32") {
-            $nameOfCheat = "WallHack";
-        }
-	   elseif ($params['cheat_type'] == "64") {
-            $nameOfCheat = "DriftMod";
-        }
-	   elseif ($params['cheat_type'] == "128") {
-            $nameOfCheat = "PursuitBot";
-        }
-	   elseif ($params['cheat_type'] == "256") {
-            $nameOfCheat = "ProfileMasker";
-        }
-	   else {
-            $nameOfCheat = "UNKNOWN";
-        }
-    }
-}
-
-whichDiscord();
+$discordWebhookURL = "https://discord.com/api/";
 
 $hookObject = json_encode([
     /*
@@ -167,39 +86,33 @@ $hookObject = json_encode([
 
             // Thumbnail object
             "thumbnail" => [
-                "url" => "https://pbs.twimg.com/profile_images/972154872261853184/RnOg6UyU_400x400.jpg"
+                "url" => "https://i-cdn.davidcarbon.dev/classic/DavidCarbon-Profile-Picture-Remaster.png"
             ],
 
             // Author object
             "author" => [
-                "name" => "Powered by DavidCarbon",
-                "url" => "https://davidcarbon.dev"
+                "name" => "Alphabet",
+                "url" => "https://www.abc.xyz"
             ],
 
             // Field array of objects
             "fields" => [
                 // Field 1
                 [
-                    "name" => "USER-ID",
+                    "name" => "Data A",
                     "value" => "Value A",
                     "inline" => false
                 ],
                 // Field 2
                 [
-                    "name" => "USERNAME",
+                    "name" => "Data B",
                     "value" => "Value B",
                     "inline" => true
                 ],
                 // Field 3
                 [
-                    "name" => "EVENT-ID",
+                    "name" => "Data C",
                     "value" => "Value C",
-                    "inline" => true
-                ],
-                // Field 4
-                [
-                    "name" => "CHEAT",
-                    "value" => "TEST",
                     "inline" => true
                 ]
             ]
