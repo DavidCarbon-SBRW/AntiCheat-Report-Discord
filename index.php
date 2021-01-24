@@ -75,7 +75,7 @@ $hookObject = json_encode([
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
              */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z")." GMT",
+            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
 
             // The integer color to be used on the left side of the embed
             "color" => hexdec( "FFFFFF" ),
