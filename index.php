@@ -87,7 +87,7 @@ $hookObject = json_encode([
             */
             // Thumbnail object
             "thumbnail" => [
-                "url" => $MyCoreAssets.'/IMAGE/'.GetEventImageFromFile($params['event_session'], EventListLink($params['serverip']))
+                "url" => "https://raw.githubusercontent.com/Zacam/GameLauncher_NFSW/interface_v3/RichPresenceAssets/gamemode_circuit.png"
             ],
 
             /*
@@ -108,7 +108,7 @@ $hookObject = json_encode([
                 // Field 3
                 [
                     "name" => "EVENT-ID",
-                    "value" => $MyCoreAssets.'/JSON/'.GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'])),
+                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'])),
                     "inline" => false
                 ],
                 // Field 1
