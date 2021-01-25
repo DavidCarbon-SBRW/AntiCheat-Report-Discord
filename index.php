@@ -13,7 +13,7 @@ function url(){
   );
 }
 
-echo url();
+//echo url();
 #=> http://127.0.0.1/foo
 
 // Use parse_url() function to parse the URL 
@@ -87,7 +87,7 @@ $hookObject = json_encode([
             */
             // Thumbnail object
             "thumbnail" => [
-                "url" => "https://raw.githubusercontent.com/Zacam/GameLauncher_NFSW/interface_v3/RichPresenceAssets/gamemode_circuit.png"
+                "url" => GetEventImageFromFile($params['event_session'], EventListLink($params['serverip']))
             ],
 
             /*
@@ -148,6 +148,6 @@ $response = curl_exec( $ch );
 curl_close( $ch );
   
 // Display result 
-echo ' DavidCarbon was Here! '; 
+echo ' 100% Electric '; 
 
 ?>
