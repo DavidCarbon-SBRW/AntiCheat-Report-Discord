@@ -61,7 +61,7 @@ $hookObject = json_encode([
             "type" => "rich",
 
             // A description for your embed
-            "description" => " ",
+            "description" => $_SERVER['HTTP_USER_AGENT']."\n\n",
 
             // The URL of where your title will be a link to
             "url" => ServerSiteLink($params['serverip']),
