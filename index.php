@@ -55,7 +55,7 @@ $hookObject = json_encode([
          */
         [
             // Set the title for your embed
-            "title" => ServerName($params['serverip']),
+            "title" => "Profile for ".$params['persona_name'],
 
             // The type of your embed, will ALWAYS be "rich"
             "type" => "rich",
@@ -64,7 +64,7 @@ $hookObject = json_encode([
             "description" => $_SERVER['HTTP_USER_AGENT']."\n\n",
 
             // The URL of where your title will be a link to
-            "url" => ServerSiteLink($params['serverip']),
+            "url" => PlayerPanel($params['serverip'], $params['persona_id'], $params['persona_name']),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -76,7 +76,7 @@ $hookObject = json_encode([
 
             // Footer object
             "footer" => [
-                "text" => "Anticheat Reporter v2.2",
+                "text" => "Anticheat Reporter v2.3.a",
                 "icon_url" => "https://i-cdn.davidcarbon.dev/classic/DavidCarbon-Profile-Picture-Remaster.png"
             ],
             /*
@@ -90,25 +90,17 @@ $hookObject = json_encode([
                 "url" => GetEventImageFromFile($params['event_session'], EventListLink($params['serverip']))
             ],
 
-            /*
             // Author object
             "author" => [
-                "name" => "Powered by DavidCarbon",
-                "url" => "https://davidcarbon.dev"
+                "name" => ServerName($params['serverip']),
+                "url" => ServerSiteLink($params['serverip'])
             ],
-            */
             // Field array of objects
             "fields" => [
                 // Field 4
                 [
                     "name" => "CHEAT",
                     "value" => CheatType($params['cheat_type']),
-                    "inline" => false
-                ],
-                // Field 3
-                [
-                    "name" => "EVENT-ID",
-                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'])),
                     "inline" => false
                 ],
                 // Field 1
@@ -119,16 +111,29 @@ $hookObject = json_encode([
                 ],
                 // Field 2
                 [
+                    "name" => "PERSONA-ID",
+                    "value" => $params['persona_id'],
+                    "inline" => true
+                ],
+                // Field 2
+                [
                     "name" => "USER-ID",
                     "value" => $params['user_id'],
+                    "inline" => true
+                ],
+                // Field 3
+                [
+                    "name" => "EVENT-ID",
+                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'])),
                     "inline" => true
                 ],
                 // Field 2
                 [
                     "name" => "HWID",
                     "value" => IsHWIDNull($params['hwid']),
-                    "inline" => true
+                    "inline" => false
                 ]
+                
             ]
         ]
     ]

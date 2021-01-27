@@ -136,4 +136,34 @@ function EventListLink($string) {
     }
 }
 
+/* Provides Public Profile Links (Panel) */
+function PlayerPanel($ServerDNS, $PersonaID, $PersonaName) {
+    if($ServerDNS == 'worldonline.pl') {
+        //WorldOnline Beta
+        return 'http://worldonline.pl/panelik/profile.php?id='.$PersonaID;
+    }
+    elseif($ServerDNS == 'game.worldunited.gg') {
+        //WorldUnited.GG
+        return 'https://discord.com/channels/618558323440222220/618583855351201802';
+    }
+    elseif($ServerDNS == 'horizon.nightriderz.world') {
+        //NightRiderz
+        return 'https://nightriderz.world/player/driver/'.$PersonaID;
+    }
+    elseif($ServerDNS == '92.63.111.195') {
+        //World Evolved
+        return 'http://world-evolved.ru/en/stats/profiles/'.$PersonaName;
+    }
+    elseif($ServerDNS == '155.138.131.23') {
+        //Underground Stage
+        return 'https://discord.com/channels/712202635540693043/712625240764842085';
+    }
+    elseif($ServerDNS == 'core.sparkserver.io') {
+        //Freeroam SparkServer
+        return 'https://ranks.sparkserver.io/drivers/'.$PersonaID;
+    }
+    else {
+        return 'https://discord.com/channels/802799152378675220/802799540100923393';
+    }
+}
 ?>
