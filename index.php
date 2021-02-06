@@ -76,7 +76,7 @@ $hookObject = json_encode([
 
             // Footer object
             "footer" => [
-                "text" => "Anticheat Reporter v2.3.a",
+                "text" => "Anticheat Reporter v2.3.b",
                 "icon_url" => "https://i-cdn.davidcarbon.dev/classic/DavidCarbon-Profile-Picture-Remaster.png"
             ],
             /*

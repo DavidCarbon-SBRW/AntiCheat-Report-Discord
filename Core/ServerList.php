@@ -144,7 +144,7 @@ function PlayerPanel($ServerDNS, $PersonaID, $PersonaName) {
     }
     elseif($ServerDNS == 'game.worldunited.gg') {
         //WorldUnited.GG
-        return 'https://discord.com/channels/618558323440222220/618583855351201802';
+        return 'https://panel.worldunited.gg/drivers/'.$PersonaName;
     }
     elseif($ServerDNS == 'horizon.nightriderz.world') {
         //NightRiderz
