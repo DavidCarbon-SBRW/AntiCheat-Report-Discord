@@ -77,7 +77,7 @@ $hookObject = json_encode([
 
             // Footer object
             "footer" => [
-                "text" => "Eagle Jump • Anticheat Reporter v2.3.c",
+                "text" => "Eagle Jump • Anticheat Reporter v2.3.d",
                 "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
             ],
             /*
