@@ -156,7 +156,7 @@ function PlayerPanel($ServerDNS, $PersonaID, $PersonaName) {
     }
     elseif($ServerDNS == '155.138.131.23') {
         //Underground Stage
-        return 'https://discord.com/channels/712202635540693043/712625240764842085';
+        return 'https://nfsranks.undergroundstage.net/drivers/'.$PersonaName;
     }
     elseif($ServerDNS == 'core.sparkserver.io') {
         //Freeroam SparkServer
