@@ -3,6 +3,7 @@ require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
 require_once (dirname(__FILE__).'/Core/HWID.php');
 require_once (dirname(__FILE__).'/Core/EventNameCheck.php');
+require_once (dirname(__FILE__).'/Core/ProfilePicture.php');
 
 function url(){
   return sprintf(
@@ -37,7 +38,7 @@ $hookObject = json_encode([
     /*
      * The image location for the senders image
      */
-    "avatar_url" => "https://i.eaglejump.org/team/Nene%20Sakura.webp",
+    "avatar_url" => ProfileIconURL($params['serverip']),
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -76,8 +77,8 @@ $hookObject = json_encode([
 
             // Footer object
             "footer" => [
-                "text" => "Anticheat Reporter v2.3.b",
-                "icon_url" => "https://i-cdn.davidcarbon.dev/classic/DavidCarbon-Profile-Picture-Remaster.png"
+                "text" => "Eagle Jump • Anticheat Reporter v2.3.c",
+                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
             ],
             /*
             // Image object
