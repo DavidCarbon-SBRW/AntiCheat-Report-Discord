@@ -3,7 +3,6 @@ require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
 require_once (dirname(__FILE__).'/Core/HWID.php');
 require_once (dirname(__FILE__).'/Core/EventNameCheck.php');
-require_once (dirname(__FILE__).'/Core/ProfilePicture.php');
 
 function url(){
   return sprintf(
@@ -34,7 +33,7 @@ $hookObject = json_encode([
     /*
      * The username shown in the message
      */
-    "username" => "Anti-Cheat",
+    "username" => ProfileName($params['serverip']),
     /*
      * The image location for the senders image
      */
