@@ -25,6 +25,9 @@ $url_components = parse_url(url());
 // string passed via URL 
 parse_str($url_components['query'], $params); 
 
+//Anti-Cheat Reporting Service Build Number
+$version = "2.4.b";
+
 $hookObject = json_encode([
     /*
      * The general "message" shown above your embeds
@@ -37,7 +40,7 @@ $hookObject = json_encode([
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($params['serverip']),
+    "avatar_url" => ProfileIconURL($params['serverip']).'?'.$version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -76,7 +79,7 @@ $hookObject = json_encode([
 
             // Footer object
             "footer" => [
-                "text" => "Eagle Jump • Anticheat Reporter v2.3.d",
+                "text" => "Eagle Jump • Anticheat Reporter v".$version,
                 "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
             ],
             /*
