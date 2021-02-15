@@ -23,13 +23,10 @@ $url_components = parse_url(url());
 
 // Use parse_str() function to parse the 
 // string passed via URL 
-parse_str($url_components['query'], $params); 
-
-//Encode the Username
-$username = utf8_encode($params['persona_name']);
+parse_str(utf8_encode($url_components['query']), $params); 
 
 //Anti-Cheat Reporting Service Build Number
-$version = "2.4.c";
+$version = "2.4.d";
 
 $hookObject = json_encode([
     /*
@@ -61,7 +58,7 @@ $hookObject = json_encode([
          */
         [
             // Set the title for your embed
-            "title" => "Profile for ".CheckUserName($username),
+            "title" => "Profile for ".CheckUserName($params['persona_name']),
 
             // The type of your embed, will ALWAYS be "rich"
             "type" => "rich",
@@ -70,7 +67,7 @@ $hookObject = json_encode([
             "description" => $_SERVER['HTTP_USER_AGENT']."\n\n",
 
             // The URL of where your title will be a link to
-            "url" => PlayerPanel($params['serverip'], $params['persona_id'], CheckUserName($username)),
+            "url" => PlayerPanel($params['serverip'], $params['persona_id'], CheckUserName($params['persona_name'])),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -112,7 +109,7 @@ $hookObject = json_encode([
                 // Field 1
                 [
                     "name" => "PERSONA",
-                    "value" => CheckUserName($username),
+                    "value" => CheckUserName($params['persona_name']),
                     "inline" => true
                 ],
                 // Field 2
