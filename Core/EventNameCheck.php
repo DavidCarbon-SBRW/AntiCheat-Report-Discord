@@ -4,10 +4,10 @@ function GetEventNameFromFile(int $EventID, String $FileName) {
     
     foreach($events_json as $var) {
         if($var['id'] == $EventID) {
-            return '('.$EventID.') '.$var['trackname'];
+            return '['.$EventID.'] '.$var['trackname'];
         }
     }
-    return '('.$EventID.') Unknown';
+    return '['.$EventID.'] Unknown';
 }
 
 function GetEventImageFromFile(int $EventID, String $FileName) {

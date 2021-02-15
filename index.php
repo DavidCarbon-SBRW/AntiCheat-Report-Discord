@@ -1,7 +1,7 @@
 <?php 
 require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
-require_once (dirname(__FILE__).'/Core/HWID.php');
+require_once (dirname(__FILE__).'/Core/PersonaCheck.php');
 require_once (dirname(__FILE__).'/Core/EventNameCheck.php');
 
 function url(){
@@ -25,8 +25,11 @@ $url_components = parse_url(url());
 // string passed via URL 
 parse_str($url_components['query'], $params); 
 
+//Encode the Username
+$username = utf8_encode($params['persona_name']);
+
 //Anti-Cheat Reporting Service Build Number
-$version = "2.4.b";
+$version = "2.4.c";
 
 $hookObject = json_encode([
     /*
@@ -58,7 +61,7 @@ $hookObject = json_encode([
          */
         [
             // Set the title for your embed
-            "title" => "Profile for ".$params['persona_name'],
+            "title" => "Profile for ".CheckUserName($username),
 
             // The type of your embed, will ALWAYS be "rich"
             "type" => "rich",
@@ -67,7 +70,7 @@ $hookObject = json_encode([
             "description" => $_SERVER['HTTP_USER_AGENT']."\n\n",
 
             // The URL of where your title will be a link to
-            "url" => PlayerPanel($params['serverip'], $params['persona_id'], $params['persona_name']),
+            "url" => PlayerPanel($params['serverip'], $params['persona_id'], CheckUserName($username)),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -109,7 +112,7 @@ $hookObject = json_encode([
                 // Field 1
                 [
                     "name" => "PERSONA",
-                    "value" => $params['persona_name'],
+                    "value" => CheckUserName($username),
                     "inline" => true
                 ],
                 // Field 2
