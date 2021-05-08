@@ -1,10 +1,15 @@
 <?php
-function IsHWIDNull($string) {
-    if (!empty($string)) {
-        return $string;
+function CheckProvidedValue($string, $value) {
+    if (!empty($value)) {
+        if($string == "User-ID" || $string == "Persona-ID") {
+            return $value;
+        }
+        else {
+            return "||".$value."||";
+        }
     }
     else {
-        return 'No HWID Provided';
+        return 'No '.$string.' Provided';
     }
 }
 

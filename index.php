@@ -26,7 +26,7 @@ $url_components = parse_url(url());
 parse_str(utf8_encode($url_components['query']), $params); 
 
 //Anti-Cheat Reporting Service Build Number
-$version = "2.4.d";
+$version = "2.5.a";
 
 $hookObject = json_encode([
     /*
@@ -115,13 +115,13 @@ $hookObject = json_encode([
                 // Field 2
                 [
                     "name" => "PERSONA-ID",
-                    "value" => $params['persona_id'],
+                    "value" => CheckProvidedValue("Persona-ID", $params['persona_id']),
                     "inline" => true
                 ],
                 // Field 2
                 [
                     "name" => "USER-ID",
-                    "value" => $params['user_id'],
+                    "value" => CheckProvidedValue("User-ID", $params['user_id']),
                     "inline" => true
                 ],
                 // Field 3
@@ -132,11 +132,28 @@ $hookObject = json_encode([
                 ],
                 // Field 2
                 [
-                    "name" => "HWID",
-                    "value" => IsHWIDNull($params['hwid']),
+                    "name" => "LEVEL 1 HWID",
+                    "value" => CheckProvidedValue("HWID", $params['hwid']),
+                    "inline" => false
+                ],
+                // Field 2
+                [
+                    "name" => "LEVEL 2 HWID",
+                    "value" => CheckProvidedValue("HWID", $params['hwid_fallback']),
+                    "inline" => false
+                ],
+                // Field 2
+                [
+                    "name" => "LAUNCHER HASH",
+                    "value" => CheckProvidedValue("Hash", $params['launcher_hash']),
+                    "inline" => false
+                ],
+                // Field 2
+                [
+                    "name" => "LAUNCHER HANDSHAKE",
+                    "value" => CheckProvidedValue("Key", $params['launcher_certificate']),
                     "inline" => false
                 ]
-                
             ]
         ]
     ]
