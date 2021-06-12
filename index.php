@@ -25,8 +25,15 @@ $url_components = parse_url(url());
 // string passed via URL 
 parse_str(utf8_encode($url_components['query']), $params); 
 
+//Anti-Cheat Reporting Service Footer
+$development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.5.a";
+$version = "2.5.b";
+//Anti-Cheat Reporting Service Footer
+$footer = "Anticheat Reporter";
+if($development == true) {
+	$footer = "Anticheat Reporter Development";
+}
 
 $hookObject = json_encode([
     /*
@@ -79,7 +86,7 @@ $hookObject = json_encode([
 
             // Footer object
             "footer" => [
-                "text" => "Eagle Jump • Anticheat Reporter v".$version,
+                "text" => "Eagle Jump • ".$footer." v".$version,
                 "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
             ],
             /*
