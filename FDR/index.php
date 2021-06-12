@@ -82,7 +82,7 @@ $hookObject = json_encode([
             "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
 
             // The integer color to be used on the left side of the embed
-            "color" => hexdec( "FFFFFF" ),
+            "color" => hexdec( "FF0000" ),
 
             // Footer object
             "footer" => [
