@@ -353,5 +353,6 @@
     {"id": "602","trackname": "City Perimeter","type": "gamemode_circuit"},
     {"id": "603","trackname": "Rockport World Loop","type": "gamemode_sprint"},
     {"id": "3000","trackname": "MadHouse Meeting Place","type": "gamemode_meetingplace"},
-    {"id": "3001","trackname": "'Polska Miejscówka' Meeting Place","type": "gamemode_meetingplace"}
+    {"id": "3001","trackname": "'Polska Miejscówka' Meeting Place","type": "gamemode_meetingplace"},
+    {"id": "3011","trackname": "LeMans 24H","type": "gamemode_circuit"}
 ]
