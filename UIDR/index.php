@@ -3,7 +3,8 @@ require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
 require_once (dirname(__FILE__).'/Core/PersonaCheck.php');
 
-function url(){
+function url()
+{
   return sprintf(
     "%s://%s%s",
     isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
@@ -27,10 +28,11 @@ parse_str(utf8_encode($url_components['query']), $params);
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.5.b";
+$version = "2.5.c";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anticheat Reporter";
-if($development == true) {
+if($development == true) 
+{
 	$footer = "Anticheat Reporter Development";
 }
 

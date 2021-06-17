@@ -1,33 +1,43 @@
 <?php
-function CheatType($string) {
-    if($string == 0) {
+function CheatType($string)
+{
+    if($string == 0)
+	{
         return "Unknown: [0]";
     }
-    elseif(is_numeric($string) == TRUE) {
-        if($string <= 1023) {
+    elseif(is_numeric($string) == TRUE)
+	{
+        if($string <= 1023)
+		{
             $i = 0;
             $cheattype = array("Ghosting", "ProfileMasker", "NoCops", "DriftMods", "Wallhack", "TankMode", "SmoothWalls", "Speedhack", "FastPowerups", "MultiHack");
             $detected = str_split(sprintf("%10d", decbin($string)));
             
-            foreach($detected as $int) {
-                if($int == 1) {
+            foreach($detected as $int)
+			{
+                if($int == 1)
+				{
                     $ret[] = $cheattype[$i];
-            }
+				}
                 
-            $i++;
+				$i++;
             }
             
             return implode(", ", $ret);
         }
-        else {
+        else
+		{
             return "Unknown: [".$string."]";
         }
     }
-    else {
-        if(!empty($string)) {
+    else
+	{
+        if(!empty($string))
+		{
             return "Unknown: [".$string."]";
         }
-        else {
+        else
+		{
             return "Unknown: [NULL]";
         }
     }

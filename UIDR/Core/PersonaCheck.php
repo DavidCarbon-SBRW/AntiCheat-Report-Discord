@@ -1,14 +1,19 @@
 <?php
-function CheckProvidedValue($string, $value) {
-    if (!empty($value)) {
-        if($string == "User-ID") {
+function CheckProvidedValue($string, $value)
+{
+    if (!empty($value))
+	{
+        if($string == "User-ID")
+		{
             return $value;
         }
-        else {
+        else
+		{
             return "||".$value."||";
         }
     }
-    else {
+    else
+	{
         return 'No '.$string.' Provided';
     }
 }
