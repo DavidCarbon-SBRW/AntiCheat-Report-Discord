@@ -1,8 +1,8 @@
 <?php 
 require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
-require_once (dirname(__FILE__).'/Core/PersonaCheck.php');
-require_once (dirname(__FILE__).'/Core/EventNameCheck.php');
+require_once (dirname(__FILE__).'/Core/StringCheck.php');
+require_once (dirname(__FILE__).'/Core/CarOrEventNameCheck.php');
 
 function url()
 {
@@ -29,7 +29,7 @@ parse_str(utf8_encode($url_components['query']), $params);
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.5.c";
+$version = "2.6.a";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anticheat Reporter";
 if($development == true) 
@@ -66,16 +66,16 @@ $hookObject = json_encode([
          * Our first embed
          */
         [
-            // Set the title for your embed
+            //Title: Player's Name
             "title" => "Profile for ".CheckUserName($params['persona_name']),
 
-            // The type of your embed, will ALWAYS be "rich"
+            //The type of your embed, will ALWAYS be "rich"
             "type" => "rich",
 
-            // A description for your embed
-            "description" => $_SERVER['HTTP_USER_AGENT']."\n\n",
+            //The User-Agent of the GameLauncher and Operating System's Name
+            "description" => CheckProvidedValue("User-Agent", $_SERVER['HTTP_USER_AGENT'])."\n".CheckProvidedValue("Operating-System", $params['os_platform']).CheckProvidedValue("Operating-Version", $_SERVER['HTTP_OS_VERSION']),
 
-            // The URL of where your title will be a link to
+            //The URL of the Player on a Player Panel if available
             "url" => PlayerPanel($params['serverip'], $params['persona_id'], CheckUserName($params['persona_name'])),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
@@ -83,81 +83,87 @@ $hookObject = json_encode([
              */
             "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
 
-            // The integer color to be used on the left side of the embed
+            //The integer color to be used on the left side of the embed
             "color" => hexdec( "FF0000" ),
 
-            // Footer object
+            //Footer Object: Reporter Footer
             "footer" => [
                 "text" => "Eagle Jump • ".$footer." v".$version,
                 "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
             ],
             /*
-            // Image object
+            //Image Object: Not Used
             "image" => [
                 "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
             ],
             */
-            // Thumbnail object
+            //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($params['event_session'], EventListLink($params['serverip']))
+                "url" => GetEventImageFromFile($params['event_session'], EventListLink($params['serverip'], "Events"))
             ],
 
-            // Author object
+            //Author Object: Server name with Web Site Link
             "author" => [
                 "name" => ServerName($params['serverip']),
                 "url" => ServerSiteLink($params['serverip'])
             ],
             // Field array of objects
             "fields" => [
-                // Field 4
+                //Field: Cheats
                 [
                     "name" => "CHEAT",
                     "value" => CheatType($params['cheat_type']),
                     "inline" => false
                 ],
-                // Field 1
+                //Field: Player's Username
                 [
                     "name" => "PERSONA",
                     "value" => CheckUserName($params['persona_name']),
                     "inline" => true
                 ],
-                // Field 2
+                //Field: Player's Selected Driver ID
                 [
                     "name" => "PERSONA-ID",
                     "value" => CheckProvidedValue("Persona-ID", $params['persona_id']),
                     "inline" => true
                 ],
-                // Field 2
+                //Field: Player's Account ID
                 [
                     "name" => "USER-ID",
                     "value" => CheckProvidedValue("User-ID", $params['user_id']),
                     "inline" => true
                 ],
-                // Field 3
+                //Field: Event Name
                 [
-                    "name" => "EVENT-ID",
-                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'])),
+                    "name" => "EVENT-ID ***-> [".CheckProvidedValue("Event-Status", $params['event_status'])."]***",
+                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'], "Events")),
                     "inline" => true
                 ],
-                // Field 2
+                //Field: Car Name
+                [
+                    "name" => "CAR-ID",
+                    "value" => GetCarNameFromFile($params['car_used'], EventListLink($params['serverip'], "Cars")),
+                    "inline" => false
+                ],
+                //Field: HWID
                 [
                     "name" => "LEVEL 1 HWID",
                     "value" => CheckProvidedValue("HWID", $params['hwid']),
                     "inline" => false
                 ],
-                // Field 2
+                //Field: HWID
                 [
                     "name" => "LEVEL 2 HWID",
                     "value" => CheckProvidedValue("HWID", $params['hwid_fallback']),
                     "inline" => false
                 ],
-                // Field 2
+                //Field: Hash
                 [
                     "name" => "LAUNCHER HASH",
                     "value" => CheckProvidedValue("Hash", $params['launcher_hash']),
                     "inline" => false
                 ],
-                // Field 2
+                //Field: Hash
                 [
                     "name" => "LAUNCHER HANDSHAKE",
                     "value" => CheckProvidedValue("Key", $params['launcher_certificate']),

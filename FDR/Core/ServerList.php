@@ -133,41 +133,41 @@ function ServerSiteLink($string)
 }
 
 /* Provides File URL for Events */
-function EventListLink($string)
+function EventListLink($string, $json_type)
 {
     if($string == 'worldonline.pl')
 	{
         //WorldOnline Beta
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/WOPL.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/WOPL.json';
     }
     elseif($string == 'game.worldunited.gg')
 	{
         //WorldUnited.GG
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Default.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/Default.json';
     }
     elseif($string == 'horizon.nightriderz.world')
 	{
         //NightRiderz
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/NightRiderz.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/NightRiderz.json';
     }
     elseif($string == '92.63.111.195')
 	{
         //World Evolved
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/WE.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/WE.json';
     }
     elseif($string == '155.138.131.23')
 	{
         //Underground Stage
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/UGS.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/UGS.json';
     }
     elseif($string == 'core.sparkserver.io')
 	{
         //Freeroam SparkServer
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/FRSS.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/FRSS.json';
     }
     else
 	{
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Default.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/Default.json';
     }
 }
 
