@@ -1,7 +1,7 @@
 <?php 
 require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
-require_once (dirname(__FILE__).'/Core/PersonaCheck.php');
+require_once (dirname(__FILE__).'/Core/StringCheck.php');
 
 function url()
 {
@@ -28,7 +28,7 @@ parse_str(utf8_encode($url_components['query']), $params);
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.5.c";
+$version = "2.6.a";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anticheat Reporter";
 if($development == true) 
@@ -73,7 +73,7 @@ $hookObject = json_encode([
             "type" => "rich",
 
             // A description for your embed
-            "description" => $_SERVER['HTTP_USER_AGENT']."\n\n",
+            "description" => CheckProvidedValue("User-Agent", $_SERVER['HTTP_USER_AGENT'])."\n".CheckProvidedValue("Operating-System", $params['os_platform']).CheckProvidedValue("Operating-Version", $_SERVER['HTTP_OS_VERSION']),
 
 			/*
             // The URL of where your title will be a link to
