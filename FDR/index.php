@@ -2,7 +2,7 @@
 require_once (dirname(__FILE__).'/Core/CheatList.php');
 require_once (dirname(__FILE__).'/Core/ServerList.php');
 require_once (dirname(__FILE__).'/Core/StringCheck.php');
-require_once (dirname(__FILE__).'/Core/CarOrEventNameCheck.php');
+require_once (dirname(__FILE__).'/Core/EventNameCheck.php');
 
 function url()
 {
@@ -29,7 +29,7 @@ parse_str(utf8_encode($url_components['query']), $params);
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.6.a";
+$version = "2.6.b";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anticheat Reporter";
 if($development == true) 
@@ -142,7 +142,7 @@ $hookObject = json_encode([
                 //Field: Car Name
                 [
                     "name" => "CAR-ID",
-                    "value" => GetCarNameFromFile($params['car_used'], EventListLink($params['serverip'], "Cars")),
+                    "value" => CheckProvidedValue("Car-ID", $params['car_used']),
                     "inline" => false
                 ],
                 //Field: HWID

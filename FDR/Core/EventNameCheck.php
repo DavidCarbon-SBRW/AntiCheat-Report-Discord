@@ -21,35 +21,6 @@ function GetEventNameFromFile(int $EventID, String $FileName)
 	}
 }
 
-function GetCarNameFromFile($CarsID, String $FileName) 
-{
-	if(!empty($CarsID))
-	{
-		try
-		{
-			$cars_json = json_decode(file_get_contents($FileName), true);
-			
-			foreach($cars_json as $var) 
-			{
-				if($var['carid'] == $CarsID) 
-				{
-					return $var['carname'];
-				}
-			}
-			
-			return '['.$CarsID.'] Unknown';
-		}
-		catch (Exception $e)
-		{
-			return '['.$CarsID.'] Unknown (JSON Error)';
-		}
-	}
-	else
-	{
-		return 'No Car-ID Provided';
-	}
-}
-
 function GetEventImageFromFile(int $EventID, String $FileName) 
 {
 	try

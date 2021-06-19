@@ -14,7 +14,7 @@ function CheckProvidedValue($string, $value)
                 return "**INVALID REPORT**\nWeb Browser";
             }
         }
-        else if($string == "User-ID" || $string == "Persona-ID" || $string == "Operating-System") 
+        else if($string == "User-ID" || $string == "Persona-ID" || $string == "Operating-System" || $string == "Car-ID") 
 		{
             return $value;
         }
@@ -24,7 +24,7 @@ function CheckProvidedValue($string, $value)
         }
         else if ($string == "Event-Status")
         {
-            if($value == "true")
+            if(strtolower($value) == "true")
             {
                 return 'COMPLETED';
             }
