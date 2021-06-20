@@ -29,7 +29,7 @@ parse_str(utf8_encode($url_components['query']), $params);
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.6.b";
+$version = "2.6.c";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anticheat Reporter";
 if($development == true) 
@@ -99,7 +99,7 @@ $hookObject = json_encode([
             */
             //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($params['event_session'], EventListLink($params['serverip'], "Events"))
+                "url" => GetEventImageFromFile($params['event_session'], EventListLink($params['serverip']))
             ],
 
             //Author Object: Server name with Web Site Link
@@ -136,7 +136,7 @@ $hookObject = json_encode([
                 //Field: Event Name
                 [
                     "name" => "EVENT-ID ***-> [".CheckProvidedValue("Event-Status", $params['event_status'])."]***",
-                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'], "Events")),
+                    "value" => GetEventNameFromFile($params['event_session'], EventListLink($params['serverip'])),
                     "inline" => true
                 ],
                 //Field: Car Name

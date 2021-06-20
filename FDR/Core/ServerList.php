@@ -133,41 +133,41 @@ function ServerSiteLink($string)
 }
 
 /* Provides File URL for Events */
-function EventListLink($string, $json_type)
+function EventListLink($string)
 {
     if($string == 'worldonline.pl')
 	{
         //WorldOnline Beta
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/WOPL.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/WOPL.json';
     }
     elseif($string == 'game.worldunited.gg')
 	{
         //WorldUnited.GG
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/Default.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/Default.json';
     }
     elseif($string == 'horizon.nightriderz.world')
 	{
         //NightRiderz
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/NightRiderz.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/NightRiderz.json';
     }
     elseif($string == '92.63.111.195')
 	{
         //World Evolved
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/WE.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/WE.json';
     }
     elseif($string == '155.138.131.23')
 	{
         //Underground Stage
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/UGS.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/UGS.json';
     }
     elseif($string == 'core.sparkserver.io')
 	{
         //Freeroam SparkServer
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/FRSS.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/FRSS.json';
     }
     else
 	{
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/'.$json_type.'/Default.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/Default.json';
     }
 }
 
@@ -177,7 +177,7 @@ function PlayerPanel($ServerDNS, $PersonaID, $PersonaName)
     if($ServerDNS == 'worldonline.pl')
 	{
         //WorldOnline Beta
-        return 'http://worldonline.pl/panelik/profile.php?id='.$PersonaID;
+        return 'http://worldonline.pl:1338/driver/'.$PersonaName;
     }
     elseif($ServerDNS == 'game.worldunited.gg')
 	{

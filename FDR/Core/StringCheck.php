@@ -7,16 +7,20 @@ function CheckProvidedValue($string, $value)
         {
             if (strpos($value, 'GameLauncher') !== false) 
             {
-                return $value;
+                return "**LAUNCHER VERSION**\n".$value;
             }
             else
             {
                 return "**INVALID REPORT**\nWeb Browser";
             }
         }
-        else if($string == "User-ID" || $string == "Persona-ID" || $string == "Operating-System" || $string == "Car-ID") 
+        else if($string == "User-ID" || $string == "Persona-ID" || $string == "Car-ID") 
 		{
             return $value;
+        }
+        else if($string == "Operating-System")
+        {
+            return "**OPERATING SYSTEM**\n".$value;
         }
         else if($string == "Operating-Version")
         {
@@ -40,7 +44,11 @@ function CheckProvidedValue($string, $value)
     }
     else 
 	{
-        if($string == "Operating-Version")
+        if($string == "Operating-System")
+        {
+            return "**OPERATING SYSTEM**\nNo Information Provided";
+        }
+        else if($string == "Operating-Version")
         {
             return NULL;
         }
