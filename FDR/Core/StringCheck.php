@@ -5,7 +5,7 @@ function CheckProvidedValue($string, $value)
 	{
         if($string == "User-Agent")
         {
-            if (strpos($value, 'GameLauncher') !== false) 
+            if (strpos($value, 'GameLauncher') !== false || strpos($value, 'LegacyLauncher') !== false || strpos($value, 'SBRW Launcher') !== false || strpos($value, 'SBRW Simple Launcher') !== false)
             {
                 return "**LAUNCHER VERSION**\n".$value;
             }

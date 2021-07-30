@@ -38,6 +38,11 @@ function DiscordChannelHook($string)
         //WorldUnited.GG Development
         return 'WEBHOOK URL';
     }
+    elseif($string == '66.11.118.65' || $string == 'overdriveworld.com')
+	{
+        //Overdrive
+        return 'WEBHOOK URL';
+    }    
     else
 	{
         return 'WEBHOOK URL';
@@ -49,8 +54,8 @@ function ServerName($string)
 {
     if($string == 'worldonline.pl')
 	{
-        //WorldOnline Beta
-        return 'WorldOnline Beta - We\'re One Family <3';
+        //WorldOnline (PL)
+        return 'WorldOnline';
     }
     elseif($string == 'game.worldunited.gg')
 	{
@@ -75,12 +80,17 @@ function ServerName($string)
     elseif($string == 'core.sparkserver.io')
 	{
         //Freeroam SparkServer
-        return 'Freeroam Sparkserver';
+        return 'Sparkserver';
     }
     elseif($string == '209.97.187.156')
 	{
         //WorldUnited.GG Development
         return 'WorldUnited DEVELOPMENT';
+    }
+    elseif($string == '66.11.118.65' || $string == 'overdriveworld.com')
+	{
+        //Overdrive
+        return 'OVERDRIVE';
     }
     else
 	{
@@ -125,6 +135,11 @@ function ServerSiteLink($string)
 	{
         //WorldUnited.GG Development
         return 'https://worldunited.gg';
+    }
+    elseif($string == '66.11.118.65' || $string == 'overdriveworld.com')
+	{
+        //Overdrive
+        return 'https://overdriveworld.com';
     }    
     else
 	{
@@ -170,6 +185,11 @@ function ProfileIconURL($string)
         //WorldUnited.GG Development
         return 'https://i.eaglejump.org/team/Christina%20Wako%20Yamato.webp';
     }
+    elseif($string == '66.11.118.65' || $string == 'overdriveworld.com')
+	{
+        //Overdrive
+        return 'https://i.eaglejump.org/team/Shizuku%20Hazuki.webp';
+    }    
     else
 	{
         return 'https://i.eaglejump.org/team/Aoba%20Suzukaze.webp';
@@ -214,6 +234,11 @@ function ProfileName($string)
         //WorldUnited.GG Development
         return 'Christina: Anti-Cheat';
     }
+    elseif($string == '66.11.118.65' || $string == 'overdriveworld.com')
+    {
+        //Overdrive
+        return 'Shizuku: Anti-Cheat';
+    }    
     else
 	{
         return 'Aoba: Anti-Cheat';

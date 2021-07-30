@@ -28,7 +28,7 @@ parse_str(utf8_encode($url_components['query']), $params);
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.6.a";
+$version = "2.6.d";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anticheat Reporter";
 if($development == true) 
@@ -113,7 +113,7 @@ $hookObject = json_encode([
                 // Field 4
                 [
                     "name" => "ALERT",
-                    "value" => "*Launcher Prevented Cheats for this User*",
+                    "value" => CheckProvidedValue("Alert-Status", $_SERVER['HTTP_USER_AGENT']),
                     "inline" => false
                 ],
                 // Field 4
