@@ -355,6 +355,8 @@
 	{"id": "610","trackname": "Speeding","type": "gamemode_drag"},
 	{"id": "612","trackname": "Hotel Heist","type": "gamemode_pursuit_mp"},
 	{"id": "614","trackname": "Highlander Point","type": "gamemode_circuit"},
+	{"id": "616","trackname": "Nascar Moment","type": "gamemode_circuit"},
+	{"id": "617","trackname": "ADR Challenge","type": "gamemode_sprint"},
 	{"id": "1000","trackname": "Private Freeroam","type": "gamemode_meetingplace"},
 	{"id": "1001","trackname": "Keys to the Rosewood (CS)","type": "gamemode_sprint"},
 	{"id": "1006","trackname": "Silk Road (NZ)","type": "gamemode_circuit"},
