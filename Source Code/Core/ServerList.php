@@ -232,7 +232,7 @@ function EventListLink($string)
     elseif($string == 'game.worldunited.gg')
 	{
         //WorldUnited.GG
-        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/Default.json';
+        return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/WorldUnitedGG.json';
     }
     elseif($string == 'horizon.nightriderz.world')
 	{
