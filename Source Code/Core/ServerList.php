@@ -1,51 +1,114 @@
 <?php
 
 /* Sets the correct Discord Channel */
-function DiscordChannelHook($string)
+function DiscordChannelHook($string, $separate_channel_UID = false)
 {
     if($string == 'worldonline.pl')
-	{
+    {
         //WorldOnline Beta
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
     elseif($string == 'game.worldunited.gg')
-	{
+    {
         //WorldUnited.GG
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
-    elseif($string == 'horizon.nightriderz.world')
-	{
+    elseif($string == 'horizon.nightriderz.world' || $string == 'thelab.nightriderz.world')
+    {
         //NightRiderz
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
-    elseif($string == '92.63.111.195')
-	{
+    elseif($string == '92.63.111.195' || $string == '45.133.216.224')
+    {
         //World Evolved
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
-    elseif($string == '155.138.131.23')
-	{
+    elseif($string == '155.138.131.23' || $string == 'core.undergroundstage.net')
+    {
         //Underground Stage
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
     elseif($string == 'core.sparkserver.io')
-	{
+    {
         //Freeroam SparkServer
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
     elseif($string == '209.97.187.156')
-	{
+    {
         //WorldUnited.GG Development
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
     elseif($string == '66.11.118.65' || $string == 'overdriveworld.com')
 	{
         //Overdrive
-        return 'WEBHOOK URL';
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
     else
-	{
-        return 'WEBHOOK URL';
+    {
+        if($separate_channel_UID)
+        {
+            return 'WEBHOOK URL';
+        }
+        else
+        {
+            return 'WEBHOOK URL';
+        }
     }
 }
 
@@ -65,14 +128,14 @@ function ServerName($string)
     elseif($string == 'horizon.nightriderz.world')
 	{
         //NightRiderz
-        return 'NIGHTRIDERZ | HORIZON';
+        return 'NIGHTRIDERZ: Horizon';
     }
-    elseif($string == '92.63.111.195')
+    elseif($string == '92.63.111.195' || $string == '45.133.216.224')
 	{
         //World Evolved
         return 'World Evolved RU';
     }
-    elseif($string == '155.138.131.23')
+    elseif($string == '155.138.131.23' || $string == 'core.undergroundstage.net')
 	{
         //Underground Stage
         return 'UNDERGROUND STAGE';
@@ -91,6 +154,17 @@ function ServerName($string)
 	{
         //Overdrive
         return 'OVERDRIVE';
+    }
+	elseif($string == 'thelab.nightriderz.world')
+	{
+        //"NightRiderz Development
+        return 'NIGHTRIDERZ: The lab';
+    }
+    elseif((strpos($string, 'davidcarbon') !== false && (strpos($string, '.dev') !== false || strpos($string, '.download') !== false)) || 
+           (strpos($string, '.org') !== false && (strpos($string, 'carboncrew') !== false || strpos($string, 'eaglejump') !== false)))
+	{ 
+        //DavidCarbon and Developers
+        return 'Debug Report - Test Processed';
     }
     else
 	{
@@ -116,12 +190,12 @@ function ServerSiteLink($string)
         //NightRiderz
         return 'https://nightriderz.world';
     }
-    elseif($string == '92.63.111.195')
+    elseif($string == '92.63.111.195' || $string == '45.133.216.224')
 	{
         //World Evolved
         return 'http://world-evolved.ru';
     }
-    elseif($string == '155.138.131.23')
+    elseif($string == '155.138.131.23' || $string == 'core.undergroundstage.net')
 	{
         //Underground Stage
         return 'http://undergroundstage.net';
@@ -165,12 +239,12 @@ function EventListLink($string)
         //NightRiderz
         return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/NightRiderz.json';
     }
-    elseif($string == '92.63.111.195')
+    elseif($string == '92.63.111.195' || $string == '45.133.216.224')
 	{
         //World Evolved
         return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/WE.json';
     }
-    elseif($string == '155.138.131.23')
+    elseif($string == '155.138.131.23' || $string == 'core.undergroundstage.net')
 	{
         //Underground Stage
         return 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/UGS.json';
@@ -209,12 +283,12 @@ function PlayerPanel($ServerDNS, $PersonaID, $PersonaName)
         //NightRiderz
         return 'https://nightriderz.world/player/driver/'.$PersonaID;
     }
-    elseif($ServerDNS == '92.63.111.195')
+    elseif($ServerDNS == '92.63.111.195' || $ServerDNS == '45.133.216.224')
 	{
         //World Evolved
         return 'http://world-evolved.ru/en/stats/profiles/'.$PersonaName;
     }
-    elseif($ServerDNS == '155.138.131.23')
+    elseif($ServerDNS == '155.138.131.23' || $string == 'core.undergroundstage.net')
 	{
         //Underground Stage
         return 'https://nfsranks.undergroundstage.net/drivers/'.$PersonaName;
@@ -228,6 +302,11 @@ function PlayerPanel($ServerDNS, $PersonaID, $PersonaName)
 	{
         //Overdrive
         return 'https://overdriveworld.com/drivers/'.$PersonaName;
+    }
+	elseif($string == 'thelab.nightriderz.world')
+	{
+        //"NightRiderz Development
+        return 'https://nightriderz.world';
     }
     else
 	{
@@ -253,12 +332,12 @@ function ProfileIconURL($string)
         //NightRiderz
         return 'https://i.eaglejump.org/team/Rin%20Toyama.webp';
     }
-    elseif($string == '92.63.111.195')
+    elseif($string == '92.63.111.195' || $string == '45.133.216.224')
 	{
         //World Evolved
         return 'https://i.eaglejump.org/team/Momiji%20Mochizuki.webp';
     }
-    elseif($string == '155.138.131.23')
+    elseif($string == '155.138.131.23' || $string == 'core.undergroundstage.net')
 	{
         //Underground Stage
         return 'https://i.eaglejump.org/team/Tsubame%20Narumi.webp';
@@ -278,6 +357,21 @@ function ProfileIconURL($string)
         //Overdrive
         return 'https://i.eaglejump.org/team/Shizuku%20Hazuki.webp';
     }
+	elseif($string == 'thelab.nightriderz.world')
+	{
+        //"NightRiderz Development
+        return 'https://i.eaglejump.org/team/Rin%20Toyama.webp';
+    }
+    elseif($string == 'Hifumi Takimoto')
+	{
+        return 'https://i.eaglejump.org/team/Hifumi%20Takimoto.webp';
+    }
+    elseif((strpos($string, 'davidcarbon') !== false && (strpos($string, '.dev') !== false || strpos($string, '.download') !== false)) || 
+           (strpos($string, '.org') !== false && (strpos($string, 'carboncrew') !== false || strpos($string, 'eaglejump') !== false)))
+	{
+        //DavidCarbon and Developers
+        return 'https://i.eaglejump.org/team/Umiko%20Ahagon.webp';
+    }   
     else
 	{
         return 'https://i.eaglejump.org/team/Aoba%20Suzukaze.webp';
@@ -302,12 +396,12 @@ function ProfileName($string)
         //NightRiderz
         return 'Rin: Anti-Cheat';
     }
-    elseif($string == '92.63.111.195')
+    elseif($string == '92.63.111.195' || $string == '45.133.216.224')
 	{
         //World Evolved
         return 'Momiji: Anti-Cheat';
     }
-    elseif($string == '155.138.131.23')
+    elseif($string == '155.138.131.23' || $string == 'core.undergroundstage.net')
 	{
         //Underground Stage
         return 'Tsubame: Anti-Cheat';
@@ -326,6 +420,12 @@ function ProfileName($string)
     {
         //Overdrive
         return 'Shizuku: Anti-Cheat';
+    }
+	elseif((strpos($string, 'davidcarbon') !== false && (strpos($string, '.dev') !== false || strpos($string, '.download') !== false)) || 
+           (strpos($string, '.org') !== false && (strpos($string, 'carboncrew') !== false || strpos($string, 'eaglejump') !== false)))
+	{
+        //DavidCarbon and Developers
+        return 'Umiko: Anti-Cheat';
     }
     else
 	{

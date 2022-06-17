@@ -1,20 +1,49 @@
 <?php
-function CheckProvidedValue($string, $value) 
+function LauncherAllowList($string, $debug = false) 
 {
-    if (!empty($value)) 
+    if (!empty($string)) 
+	{
+        //Official (Full Supported Products)
+        if (strpos($value, 'GameLauncher') !== false || strpos($value, 'LegacyLauncher') !== false ||
+            strpos($value, 'SBRW Launcher') !== false || strpos($value, 'SBRW Simple Launcher') !== false || $debug)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
+function CheckProvidedValue($string, $value, $debug = false) 
+{
+    if (!empty($value))
 	{
         if($string == "User-Agent")
         {
-            if (strpos($value, 'GameLauncher') !== false || strpos($value, 'LegacyLauncher') !== false || strpos($value, 'SBRW Launcher') !== false || strpos($value, 'SBRW Simple Launcher') !== false)
+            if (LauncherAllowList($value, $debug))
             {
-                return "**LAUNCHER VERSION**\n".$value;
+                if($debug)
+                {
+                    return "**LAUNCHER VERSION**\nDebug Report Only";
+                }
+                else
+                {
+                    return "**LAUNCHER VERSION**\n".$value;
+                }
             }
             else
             {
                 return "**INVALID REPORT**\nWeb Browser";
             }
         }
-        else if($string == "User-ID" || $string == "Persona-ID" || $string == "Car-ID") 
+        else if($string == "User-ID" || $string == "Persona-ID" ||
+                $string == "Car-ID" || $string == "Discord-ID") 
 		{
             return $value;
         }

@@ -1,16 +1,16 @@
 <?php
 function CheatType($string)
 {
-    if($string == 0)
+    if(is_numeric($string) == TRUE)
 	{
-        return "Unknown: [0]";
-    }
-    elseif(is_numeric($string) == TRUE)
-	{
-        if($string <= 1023)
+        if($string == -1)
+        {
+            return "Anti-Cheat Not Initialized";
+        }
+        elseif($string > 0 && $string <= 1023)
 		{
             $i = 0;
-            $cheattype = array("Ghosting", "ProfileMasker", "NoCops", "DriftMods", "Wallhack", "TankMode", "SmoothWalls", "Speedhack", "FastPowerups", "MultiHack");
+            $cheattype = array("Ghosting", "Profile Masker", "Pursuit Bot", "Handling Modifier", "Wallhack", "Tank Mode", "Smooth Walls", "Speedhack", "Fast Powerups", "MultiHack");
             $detected = str_split(sprintf("%10d", decbin($string)));
             
             foreach($detected as $int)
