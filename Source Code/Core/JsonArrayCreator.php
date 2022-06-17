@@ -8,7 +8,7 @@ function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0
         {
                 $version_split = explode(" ", $string);
                 /* Version 1 */
-                if(version_compare($version_split[1], '2.1.7.8', "<="))
+                if(version_compare($version_split[1], '2.1.7.8', "<=") || version_compare($version_split[1], '3.1.7.7', "=="))
                 {
                     return 1;
                 }

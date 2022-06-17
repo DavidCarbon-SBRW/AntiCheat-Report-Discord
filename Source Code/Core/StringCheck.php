@@ -20,6 +20,79 @@ function LauncherAllowList($string, $debug = false)
     }
 }
 
+/* Launcher's Version Comparison (String Check: Alert-Status) */
+function AlertStatusReportVersion($string, $debug = false)
+{
+    try
+    {
+        if(strpos($string, 'GameLauncher') !== false || strpos($string, 'SBRW Launcher') !== false)
+        {
+                $version_split = explode(" ", $string);
+                /* Version 1 */
+                if(version_compare($version_split[1], '2.1.6.6', "<="))
+                {
+                    return "*Launcher Did Not Prevent Cheats for this User*";
+                }
+                elseif(version_compare($version_split[1], '2.1.7.8', "<=") || version_compare($version_split[1], '3.1.7.7', "=="))
+                {
+                    return "*Launcher Prevented Cheats for this User*";
+                }
+                /* Version 2 */
+                elseif(version_compare($version_split[1], '2.1.8.8', "<="))
+                {
+                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
+                }
+                /* Version 3 */
+                elseif(version_compare($version_split[1], '2.1.9.0002', "<="))
+                {
+                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
+                }
+                /* Version 4 */
+                else
+                {
+                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
+                }
+        }
+        elseif(strpos($string, 'LegacyLauncher') !== false)
+        {
+            $version_split = explode(" ", $string);
+            if(count($version_split) > 0)
+            {
+                $version_split = explode(" ", $string);
+                /* Version -1 */
+                if(version_compare($version_split[1], '1.0.5.0', "<="))
+                {
+                    return "*Launcher Did Not Prevent Cheats for this User*";
+                }
+                /* Version 1 */
+                else
+                {
+                    return "*Launcher Prevented Cheats for this User*";
+                }
+            }
+            /* Version -1 */
+            else
+            {
+                return "*Launcher **May Have** Prevented Cheats for this User*";
+            }
+        }
+        elseif($debug == true)
+        {
+            /* Just a Debug Report, Its Safe to Disregard this */
+            return "Woah! You are not Shotaro Tokuno!\nAnyhow, this is a Mock Debug Report";
+        }
+        else
+        {
+            /* Generic Response */
+            return 'Unknown Details about the Launcher';
+        }
+    }
+    catch (Exception $on_the_fly_error)
+    {
+        return 'Unknown Server Report Error';
+    }
+}
+
 function CheckProvidedValue($string, $value, $debug = false) 
 {
     if (!empty($value))
@@ -41,6 +114,10 @@ function CheckProvidedValue($string, $value, $debug = false)
             {
                 return "**INVALID REPORT**\nWeb Browser";
             }
+        }
+        else if($string == "Alert-Status")
+        {
+            return AlertStatusReportVersion($value, $debug);
         }
         else if($string == "User-ID" || $string == "Persona-ID" ||
                 $string == "Car-ID" || $string == "Discord-ID") 
