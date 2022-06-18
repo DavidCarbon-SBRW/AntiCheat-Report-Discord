@@ -4,8 +4,8 @@ function LauncherAllowList($string, $debug = false)
     if (!empty($string)) 
 	{
         //Official (Full Supported Products)
-        if (strpos($value, 'GameLauncher') !== false || strpos($value, 'LegacyLauncher') !== false ||
-            strpos($value, 'SBRW Launcher') !== false || strpos($value, 'SBRW Simple Launcher') !== false || $debug)
+        if (strpos($string, 'GameLauncher') !== false || strpos($string, 'LegacyLauncher') !== false ||
+            strpos($string, 'SBRW Launcher') !== false || strpos($string, 'SBRW Simple Launcher') !== false || $debug)
         {
             return true;
         }
@@ -25,7 +25,7 @@ function AlertStatusReportVersion($string, $debug = false)
 {
     try
     {
-        if(strpos($string, 'GameLauncher') !== false || strpos($string, 'SBRW Launcher') !== false)
+        if(strpos($string, 'GameLauncher') !== false)
         {
                 $version_split = explode(" ", $string);
                 /* Version 1 */
@@ -51,6 +51,34 @@ function AlertStatusReportVersion($string, $debug = false)
                 else
                 {
                     return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
+                }
+        }
+        elseif(strpos($string, 'SBRW Launcher') !== false)
+        {
+                $version_split = explode(" ", $string);
+                /* Version 1 */
+                if(version_compare($version_split[2], '2.1.6.6', "<="))
+                {
+                    return "*Launcher Did Not Prevent Cheats for this User*";
+                }
+                elseif(version_compare($version_split[2], '2.1.7.8', "<=") || version_compare($version_split[2], '3.1.7.7', "=="))
+                {
+                    return "*Launcher Prevented Cheats for this User*";
+                }
+                /* Version 2 */
+                elseif(version_compare($version_split[2], '2.1.8.8', "<="))
+                {
+                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
+                }
+                /* Version 3 */
+                elseif(version_compare($version_split[2], '2.1.9.0002', "<="))
+                {
+                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
+                }
+                /* Version 4 */
+                else
+                {
+                    return "*After 2 Minutes of a Detection\nLauncher Prevented Cheats for this User*";
                 }
         }
         elseif(strpos($string, 'LegacyLauncher') !== false)
