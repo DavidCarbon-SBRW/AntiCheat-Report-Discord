@@ -27,6 +27,7 @@ $url_components = parse_url(url());
 // string passed via URL 
 parse_str(utf8_encode($url_components['query']), $params); 
 
+$development_live = true;
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
@@ -61,6 +62,10 @@ if(!empty($params['alert_mode']) && !empty($params['alert_access_code']))
 if($development == true && !$useAlertFormat) 
 {
 	$footer = "Anti-Cheat Reporter Development";
+}
+elseif($development_live == true)
+{
+    $footer = "Anti-Cheat Reporter Beta";
 }
 
 if((!empty($params['report_format']) || LauncherAllowList($_SERVER['HTTP_USER_AGENT'], $development)) && !$useAlertFormat)

@@ -4,7 +4,7 @@ function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0
 {
     try
     {
-        if(strpos($string, 'GameLauncher') !== false || strpos($string, 'SBRW Launcher') !== false)
+        if(strpos($string, 'GameLauncher') !== false)
         {
                 $version_split = explode(" ", $string);
                 /* Version 1 */
@@ -19,6 +19,30 @@ function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0
                 }
                 /* Version 3 */
                 elseif(version_compare($version_split[1], '2.1.9.0002', "<="))
+                {
+                    return 3;
+                }
+                /* Version 4 */
+                else
+                {
+                    return 4;
+                }
+        }
+        elseif(strpos($string, 'SBRW Launcher') !== false)
+        {
+                $version_split = explode(" ", $string);
+                /* Version 1 */
+                if(version_compare($version_split[2], '2.1.7.8', "<=") || version_compare($version_split[2], '3.1.7.7', "=="))
+                {
+                    return 1;
+                }
+                /* Version 2 */
+                elseif(version_compare($version_split[2], '2.1.8.8', "<="))
+                {
+                    return 2;
+                }
+                /* Version 3 */
+                elseif(version_compare($version_split[2], '2.1.9.0002', "<="))
                 {
                     return 3;
                 }
