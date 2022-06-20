@@ -148,7 +148,7 @@ function CheckProvidedValue($string, $value, $debug = false)
             return AlertStatusReportVersion($value, $debug);
         }
         else if($string == "User-ID" || $string == "Persona-ID" ||
-                $string == "Car-ID" || $string == "Discord-ID") 
+                $string == "Car-ID") 
 		{
             return $value;
         }
