@@ -101,8 +101,9 @@ function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0
     }
 }
 
-/* Alerts */
+/** Alerts **/
 
+/* Version: 1 */
 function Json_Format_Version_Alert_One($server_IP, $future_Version, $changelog_Message, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -176,8 +177,138 @@ function Json_Format_Version_Alert_One($server_IP, $future_Version, $changelog_M
 ];
 }
 
-/* User ID Only Report */
+/** User ID Only Report **/
 
+/* Version: -4.1 */
+function Json_Format_Version_Negative_Four_One($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $ac_Error, $debug = false)
+{
+    return [
+    /*
+     * The general "message" shown above your embeds
+     */
+    "content" => "",
+    /*
+     * The username shown in the message
+     */
+    "username" => ProfileName($server_IP),
+    /*
+     * The image location for the senders image
+     */
+    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
+    /*
+     * Whether or not to read the message in Text-to-speech
+     */
+    "tts" => false,
+    /*
+     * File contents to send to upload a file
+     */
+    // "file" => "",
+    /*
+     * An array of Embeds
+     */
+    "embeds" => [
+        /*
+         * Our first embed
+         */
+        [
+            /*
+            //Title: Player's Name
+            "title" => "Profile for ".CheckUserName($persona_Name),
+            */
+            /* The type of your embed, will ALWAYS be "rich" */
+            "type" => "rich",
+
+            /* The User-Agent of the GameLauncher and Operating System's Name */
+            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
+            /*
+            //The URL of the Player on a Player Panel if available
+            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
+            */
+            /* A timestamp to be displayed below the embed, IE for when an an article was posted
+             * This must be formatted as ISO8601
+             */
+            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
+
+            //The integer color to be used on the left side of the embed
+            "color" => hexdec( "FAB440" ),
+
+            //Footer Object: Reporter Footer
+            "footer" => [
+                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v4.1",
+                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
+            ],
+            /*
+            //Image Object: Not Used
+            "image" => [
+                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+            ],
+            */
+            //Thumbnail Object: Gets Event Image
+            "thumbnail" => [
+                "url" => "https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/IMG/gamemode_unknown.png"
+            ],
+
+            //Author Object: Server name with Web Site Link
+            "author" => [
+                "name" => ServerName($server_IP),
+                "url" => ServerSiteLink($server_IP)
+            ],
+            // Field array of objects
+            "fields" => [
+                //Field: How was the Process Treated?
+                [
+                    "name" => "ALERT",
+                    "value" => CheckProvidedValue("Alert-Status", $launcher_UserAgent, $debug),
+                    "inline" => false
+                ],
+                //Field: Cheats
+                [
+                    "name" => "CHEAT",
+                    "value" => CheatType($cheat_Type),
+                    "inline" => false
+                ],
+                //Field: Player's Account ID
+                [
+                    "name" => "USER ID",
+                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
+                    "inline" => true
+                ],
+                //Field: HWID
+                [
+                    "name" => "HARDWARE ID",
+                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
+                    "inline" => false
+                ],
+                //Field: Player's Discord ID
+                [
+                    "name" => "DISCORD ID",
+                    "value" => CheckProvidedValue("Discord-ID", $discord_ID, $debug),
+                    "inline" => false
+                ],
+                //Field: Hash
+                [
+                    "name" => "LAUNCHER HASH",
+                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
+                    "inline" => false
+                ],
+                //Field: Hash
+                [
+                    "name" => "LAUNCHER HANDSHAKE",
+                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
+                    "inline" => false
+                ],
+                /* Field: Internal Error Report...Such a shame, they are guaranteed to be banned */
+                [
+                    "name" => "INTERNAL ERROR MESSAGE",
+                    "value" => CheckProvidedValue("Internal-Error", $ac_Error, $debug),
+                    "inline" => false
+                ]
+            ]
+        ]
+    ]
+];
+}
+/* Version: -4 */
 function Json_Format_Version_Negative_Four($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -300,7 +431,7 @@ function Json_Format_Version_Negative_Four($server_IP, $user_ID, $cheat_Type, $h
     ]
 ];
 }
-
+/* Version: -3*/
 function Json_Format_Version_Negative_Three($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -417,7 +548,7 @@ function Json_Format_Version_Negative_Three($server_IP, $user_ID, $cheat_Type, $
     ]
 ];
 }
-
+/* Version: -2 */
 function Json_Format_Version_Negative_Two($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -540,7 +671,7 @@ function Json_Format_Version_Negative_Two($server_IP, $user_ID, $cheat_Type, $hw
     ]
 ];
 }
-
+/* Version: -1 */
 function Json_Format_Version_Negative_One($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -646,8 +777,9 @@ function Json_Format_Version_Negative_One($server_IP, $user_ID, $cheat_Type, $hw
 ];
 }
 
-/* Full Detailed Report */
+/** Full Detailed Report **/
 
+/* Version: 1 */
 function Json_Format_Version_One($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -763,7 +895,7 @@ function Json_Format_Version_One($server_IP, $user_ID, $persona_Name, $persona_I
     ]
 ];
 }
-
+/* Version: 2 */
 function Json_Format_Version_Two($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -903,7 +1035,7 @@ function Json_Format_Version_Two($server_IP, $user_ID, $persona_Name, $persona_I
     ]
 ];
 }
-
+/* Version: 3 */
 function Json_Format_Version_Three($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -1037,7 +1169,7 @@ function Json_Format_Version_Three($server_IP, $user_ID, $persona_Name, $persona
     ]
 ];
 }
-
+/* Version: 4 */
 function Json_Format_Version_Four($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
@@ -1170,6 +1302,152 @@ function Json_Format_Version_Four($server_IP, $user_ID, $persona_Name, $persona_
                 [
                     "name" => "LAUNCHER HANDSHAKE",
                     "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
+                    "inline" => false
+                ]
+            ]
+        ]
+    ]
+];
+}
+/* Version: 4.1 */
+function Json_Format_Version_Four_One($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $ac_Error, $debug = false)
+{
+    return [
+    /*
+     * The general "message" shown above your embeds
+     */
+    "content" => "",
+    /*
+     * The username shown in the message
+     */
+    "username" => ProfileName($server_IP),
+    /*
+     * The image location for the senders image
+     */
+    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
+    /*
+     * Whether or not to read the message in Text-to-speech
+     */
+    "tts" => false,
+    /*
+     * File contents to send to upload a file
+     */
+    // "file" => "",
+    /*
+     * An array of Embeds
+     */
+    "embeds" => [
+        /*
+         * Our first embed
+         */
+        [
+            //Title: Player's Name
+            "title" => "Profile for ".CheckUserName($persona_Name),
+
+            //The type of your embed, will ALWAYS be "rich"
+            "type" => "rich",
+
+            //The User-Agent of the GameLauncher and Operating System's Name
+            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
+
+            //The URL of the Player on a Player Panel if available
+            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
+
+            /* A timestamp to be displayed below the embed, IE for when an an article was posted
+             * This must be formatted as ISO8601
+             */
+            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
+
+            //The integer color to be used on the left side of the embed
+            "color" => hexdec( "FF0000" ),
+
+            //Footer Object: Reporter Footer
+            "footer" => [
+                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • FDR Format v4.0",
+                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
+            ],
+            /*
+            //Image Object: Not Used
+            "image" => [
+                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
+            ],
+            */
+            //Thumbnail Object: Gets Event Image
+            "thumbnail" => [
+                "url" => GetEventImageFromFile($event_Session, EventListLink($server_IP))
+            ],
+
+            //Author Object: Server name with Web Site Link
+            "author" => [
+                "name" => ServerName($server_IP),
+                "url" => ServerSiteLink($server_IP)
+            ],
+            // Field array of objects
+            "fields" => [
+                //Field: Cheats
+                [
+                    "name" => "CHEAT",
+                    "value" => CheatType($cheat_Type),
+                    "inline" => false
+                ],
+                //Field: Player's Username
+                [
+                    "name" => "PERSONA",
+                    "value" => CheckUserName($persona_Name),
+                    "inline" => true
+                ],
+                //Field: Player's Selected Driver ID
+                [
+                    "name" => "PERSONA ID",
+                    "value" => CheckProvidedValue("Persona-ID", $persona_ID, $debug),
+                    "inline" => true
+                ],
+                //Field: Player's Account ID
+                [
+                    "name" => "USER ID",
+                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
+                    "inline" => true
+                ],
+                //Field: Event Name
+                [
+                    "name" => "EVENT ID ***-> [".CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)."]***",
+                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
+                    "inline" => true
+                ],
+                //Field: Car Name
+                [
+                    "name" => "CAR ID",
+                    "value" => CheckProvidedValue("Car-ID", $car_Name, $debug),
+                    "inline" => false
+                ],
+                //Field: HWID
+                [
+                    "name" => "HARDWARE ID",
+                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
+                    "inline" => false
+                ],
+                //Field: HWID
+                [
+                    "name" => "DISCORD CLIENT ID",
+                    "value" => CheckProvidedValue("Discord-ID", $discord_ID, $debug),
+                    "inline" => false
+                ],
+                //Field: Hash
+                [
+                    "name" => "LAUNCHER HASH",
+                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
+                    "inline" => false
+                ],
+                //Field: Hash
+                [
+                    "name" => "LAUNCHER HANDSHAKE",
+                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
+                    "inline" => false
+                ],
+                //Field: Internal Error Report...Such a shame, they are guaranteed to be banned
+                [
+                    "name" => "INTERNAL ERROR MESSAGE",
+                    "value" => CheckProvidedValue("Internal-Error", $ac_Error, $debug),
                     "inline" => false
                 ]
             ]

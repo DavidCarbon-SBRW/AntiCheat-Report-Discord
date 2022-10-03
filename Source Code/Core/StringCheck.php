@@ -171,6 +171,10 @@ function CheckProvidedValue($string, $value, $debug = false)
                 return 'QUIT';
             }
         }
+        else if ($string == "Internal-Error")
+        {
+            return "Base Exception: ".$value;
+        }
         else 
 		{
             return "||".$value."||";
@@ -189,6 +193,10 @@ function CheckProvidedValue($string, $value, $debug = false)
         else if ($string == "Event-Status")
         {
             return 'COMPLETED';
+        }
+        else if ($string == "Internal-Error")
+        {
+            return "No Base Exception Provided";
         }
         else
         {
