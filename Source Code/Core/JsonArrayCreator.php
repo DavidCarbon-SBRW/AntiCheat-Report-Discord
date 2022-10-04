@@ -180,7 +180,7 @@ function Json_Format_Version_Alert_One($server_IP, $future_Version, $changelog_M
 /** User ID Only Report **/
 
 /* Version: -4.1 */
-function Json_Format_Version_Negative_Four_One($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $ac_Error, $debug = false)
+function Json_Format_Version_Negative_Four_One($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Error, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -1310,7 +1310,7 @@ function Json_Format_Version_Four($server_IP, $user_ID, $persona_Name, $persona_
 ];
 }
 /* Version: 4.1 */
-function Json_Format_Version_Four_One($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $ac_Error, $debug = false)
+function Json_Format_Version_Four_One($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Error, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
