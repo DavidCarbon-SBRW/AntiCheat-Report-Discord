@@ -31,7 +31,7 @@ $development_live = true;
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.7.c";
+$version = "2.7.e";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anti-Cheat Reporter";
 //

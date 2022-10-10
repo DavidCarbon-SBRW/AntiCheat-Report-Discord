@@ -996,7 +996,7 @@ function Json_Format_Version_Two($server_IP, $user_ID, $persona_Name, $persona_I
                 ],
                 //Field: Event Name
                 [
-                    "name" => "EVENT ID ***-> [".CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)."]***",
+                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
                     "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
                     "inline" => true
                 ],
@@ -1136,7 +1136,7 @@ function Json_Format_Version_Three($server_IP, $user_ID, $persona_Name, $persona
                 ],
                 //Field: Event Name
                 [
-                    "name" => "EVENT ID ***-> [".CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)."]***",
+                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
                     "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
                     "inline" => true
                 ],
@@ -1270,7 +1270,7 @@ function Json_Format_Version_Four($server_IP, $user_ID, $persona_Name, $persona_
                 ],
                 //Field: Event Name
                 [
-                    "name" => "EVENT ID ***-> [".CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)."]***",
+                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
                     "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
                     "inline" => true
                 ],
@@ -1410,7 +1410,7 @@ function Json_Format_Version_Four_One($server_IP, $user_ID, $persona_Name, $pers
                 ],
                 //Field: Event Name
                 [
-                    "name" => "EVENT ID ***-> [".CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)."]***",
+                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
                     "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
                     "inline" => true
                 ],
