@@ -1,8 +1,202 @@
 <?php
-/* FailSafe Version Format (Pre-Format Reports) */
+
+/**
+ * PayloadBuilder
+ * Assembles the Discord Webhook JSON arrays for different report types.
+ */
+class PayloadBuilder
+{
+    /**
+     * Colors for Discord Embeds (Decimal)
+     */
+    private const COLOR_RED = 16711680;
+    private const COLOR_ORANGE = 16753920;
+    private const COLOR_GREEN = 65280;
+    private const COLOR_GREY = 9807270;
+
+    /**
+     * Builds the main Anti-Cheat Detection Report.
+     */
+    public static function createCheatReport(
+        string $serverIp,
+        string $eventId,
+        string $cheatCode,
+        string $carId,
+        string $hwid,
+        string $discordId,
+        string $launcherHash,
+        string $launcherKey,
+        string $userAgent,
+        string $osName,
+        string $osVersion, // Often unused or part of OS Name logic
+        string $internalError,
+        string $footerText,
+        string $appVersion,
+        bool $isDevMode
+    ): array {
+        // 1. Resolve Data using our new Registries
+        $serverConfig = ServerRegistry::get($serverIp);
+        $eventName    = EventRegistry::getName((int)$eventId, ServerRegistry::EventListLink($serverIp));
+        $eventImage   = EventRegistry::getImage((int)$eventId, ServerRegistry::EventListLink($serverIp));
+        $cheatName    = CheatRegistry::resolve($cheatCode);
+        
+        // 2. Resolve Dynamic Links/Images
+        $authorName   = $serverConfig['profile_name'];
+        $authorIcon   = ServerRegistry::getBaseIconUrl() . $serverConfig['icon'];
+        $footerIcon   = $authorIcon; // Often matches the author
+        
+        // 3. Determine Status/Color based on Launcher Version logic
+        $launcherStatus = ReportFormatter::getLauncherStatus($userAgent);
+        $embedColor = self::determineColor($userAgent);
+
+        // 4. Build Fields
+        $fields = [
+            [
+                "name"   => "USER AGENT",
+                "value"  => "```{$userAgent}```\n{$launcherStatus}",
+                "inline" => false
+            ],
+            [
+                "name"   => "SERVER / EVENT INFO",
+                "value"  => "**Server:** " . $serverConfig['name'] . "\n**Event:** " . $eventName,
+                "inline" => false
+            ],
+            [
+                "name"   => "VIOLATION / CHEAT DETECTED",
+                "value"  => "**{$cheatName}**",
+                "inline" => false
+            ],
+            [
+                "name"   => "CAR ID",
+                "value"  => ReportFormatter::formatField("Car-ID", $carId, $isDevMode),
+                "inline" => false
+            ],
+            [
+                "name"   => "HARDWARE ID",
+                "value"  => ReportFormatter::formatField("HWID", $hwid, $isDevMode),
+                "inline" => false
+            ],
+            [
+                "name"   => "DISCORD CLIENT ID",
+                "value"  => ReportFormatter::formatField("Discord-ID", $discordId, $isDevMode),
+                "inline" => false
+            ],
+            [
+                "name"   => "LAUNCHER HASH",
+                "value"  => ReportFormatter::formatField("Hash", $launcherHash, $isDevMode),
+                "inline" => false
+            ],
+            [
+                "name"   => "LAUNCHER HANDSHAKE",
+                "value"  => ReportFormatter::formatField("Key", $launcherKey, $isDevMode),
+                "inline" => false
+            ],
+            [
+                "name"   => "OPERATING SYSTEM",
+                "value"  => ReportFormatter::formatField("Operating-System", $osName, $isDevMode),
+                "inline" => false
+            ]
+        ];
+
+        // Add Internal Error field only if relevant
+        if (!empty($internalError) && $internalError !== '0') {
+            $fields[] = [
+                "name"   => "INTERNAL ERROR MESSAGE",
+                "value"  => ReportFormatter::formatField("Internal-Error", $internalError, $isDevMode),
+                "inline" => false
+            ];
+        }
+
+        // 5. Construct Final Array
+        return [
+            "username"   => $authorName,
+            "avatar_url" => $authorIcon,
+            "embeds"     => [
+                [
+                    "title"       => "Anti-Cheat Report",
+                    "type"        => "rich",
+                    "url"         => $serverConfig['site'],
+                    "color"       => $embedColor,
+                    "thumbnail"   => ["url" => $eventImage],
+                    "footer"      => [
+                        "text"     => "{$footerText} | Build: {$appVersion}",
+                        "icon_url" => $footerIcon
+                    ],
+                    "fields"      => $fields
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Builds a System Alert (e.g., for Launcher Updates or Maintenance).
+     */
+    public static function createSystemAlert(
+        string $serverIp,
+        string $versionInfo,
+        string $changelog,
+        string $footerText,
+        string $appVersion,
+        bool $isDevMode
+    ): array {
+        $serverConfig = ServerRegistry::get($serverIp);
+        $authorName   = $serverConfig['profile_name'];
+        $authorIcon   = ServerRegistry::getBaseIconUrl() . $serverConfig['icon'];
+
+        return [
+            "username"   => $authorName,
+            "avatar_url" => $authorIcon,
+            "embeds"     => [
+                [
+                    "title"       => "System Alert / Update",
+                    "type"        => "rich",
+                    "description" => $changelog,
+                    "url"         => $serverConfig['site'],
+                    "color"       => self::COLOR_ORANGE, // Orange for alerts
+                    "footer"      => [
+                        "text"     => "{$footerText} | Build: {$appVersion}",
+                        "icon_url" => $authorIcon
+                    ],
+                    "fields"      => [
+                        [
+                            "name"   => "VERSION INFO",
+                            "value"  => $versionInfo,
+                            "inline" => false
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Determines the embed color based on launcher version/severity.
+     */
+    private static function determineColor(string $userAgent): int
+    {
+        // Use the Formatter logic to check if allowed
+        if (ReportFormatter::isLauncherAllowed($userAgent)) {
+            // Check specific versions for "Warning" vs "Good"
+            // This mirrors the logic from the old FailSafeReportVersionFormat
+            if (strpos($userAgent, '2.1.6.6') !== false) {
+                 return self::COLOR_RED; // Old/Bad version
+            }
+            return self::COLOR_GREEN; // Valid
+        }
+
+        return self::COLOR_GREY; // Unknown/Generic
+    }
+}
+
+/* -------------------------------------------------------------------------
+ * Legacy Wrapper Functions
+ * -------------------------------------------------------------------------
+ * These match the function signatures expected by index.php
+ */
+
 function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0)
 {
-    try
+        try
     {
         if(strpos($string, 'GameLauncher') !== false)
         {
@@ -101,1358 +295,30 @@ function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0
     }
 }
 
-/** Alerts **/
-
-/* Version: 1 */
-function Json_Format_Version_Alert_One($server_IP, $future_Version, $changelog_Message, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-
-            //Title: Player's Name
-            "title" => "Upcoming Changes with version ".$future_Version,
-
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => $changelog_Message,
-            /*
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-            */
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "9FC120" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v4.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => 'https://i3-sbrw.davidcarbon.download/assets/recreated/Soapbox%20Race%20World%20Logo%20Text%20(Shadow%20Effect)%20-%20Web.webp'
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => 'Umiko Ahagon',
-                "icon_url" => 'https://i.eaglejump.org/team/Umiko%20Ahagon.webp'
-            ]
-        ]
-    ]
-];
+/*
+ * The main report formatting function called by index.php
+ * Note: The argument list is long, matching the snippet you provided.
+ */
+function Json_Format_Version_One(
+    $serverIp, $eventId, $cheatCode, $carId, $hwid, $discordId, 
+    $launcherHash, $launcherKey, $userAgent, $osName, $osVersion, 
+    $internalError, $footerText, $appVersion, $isDevMode
+) {
+    return PayloadBuilder::createCheatReport(
+        $serverIp, $eventId, $cheatCode, $carId, $hwid, $discordId, 
+        $launcherHash, $launcherKey, $userAgent, $osName, $osVersion, 
+        $internalError, $footerText, $appVersion, $isDevMode
+    );
 }
 
-/** User ID Only Report **/
-
-/* Version: -4.1 */
-function Json_Format_Version_Negative_Four_One($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Error, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            /*
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-            */
-            /* The type of your embed, will ALWAYS be "rich" */
-            "type" => "rich",
-
-            /* The User-Agent of the GameLauncher and Operating System's Name */
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-            /*
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-            */
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FAB440" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v4.1",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => "https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/IMG/gamemode_unknown.png"
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: How was the Process Treated?
-                [
-                    "name" => "ALERT",
-                    "value" => CheckProvidedValue("Alert-Status", $launcher_UserAgent, $debug),
-                    "inline" => false
-                ],
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: Player's Discord ID
-                [
-                    "name" => "DISCORD ID",
-                    "value" => CheckProvidedValue("Discord-ID", $discord_ID, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ],
-                /* Field: Internal Error Report...Such a shame, they are guaranteed to be banned */
-                [
-                    "name" => "INTERNAL ERROR MESSAGE",
-                    "value" => CheckProvidedValue("Internal-Error", $ac_Error, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: -4 */
-function Json_Format_Version_Negative_Four($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            /*
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-            */
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-            /*
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-            */
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FAB440" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v4.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => "https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/IMG/gamemode_unknown.png"
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: How was the Process Treated?
-                [
-                    "name" => "ALERT",
-                    "value" => CheckProvidedValue("Alert-Status", $launcher_UserAgent, $debug),
-                    "inline" => false
-                ],
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "DISCORD ID",
-                    "value" => CheckProvidedValue("Discord-ID", $discord_ID, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: -3*/
-function Json_Format_Version_Negative_Three($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            /*
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-            */
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-            /*
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-            */
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FAB440" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v3.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => "https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/IMG/gamemode_unknown.png"
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: How was the Process Treated?
-                [
-                    "name" => "ALERT",
-                    "value" => CheckProvidedValue("Alert-Status", $launcher_UserAgent, $debug),
-                    "inline" => false
-                ],
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: HWID
-                [
-                    "name" => "LEVEL 1 HWID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: -2 */
-function Json_Format_Version_Negative_Two($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            /*
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-            */
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-            /*
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-            */
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FAB440" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v2.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => "https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/IMG/gamemode_unknown.png"
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: How was the Process Treated?
-                [
-                    "name" => "ALERT",
-                    "value" => CheckProvidedValue("Alert-Status", $launcher_UserAgent, $debug),
-                    "inline" => false
-                ],
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: HWID
-                [
-                    "name" => "LEVEL 1 HWID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "LEVEL 2 HWID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelTwo, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: -1 */
-function Json_Format_Version_Negative_One($server_IP, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            /*
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-            */
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug),
-            /*
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-            */
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FAB440" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • UIDR Format v1.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => "https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/IMG/gamemode_unknown.png"
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: How was the Process Treated?
-                [
-                    "name" => "ALERT",
-                    "value" => CheckProvidedValue("Alert-Status", $launcher_UserAgent, $debug),
-                    "inline" => false
-                ],
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-
-/** Full Detailed Report **/
-
-/* Version: 1 */
-function Json_Format_Version_One($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug),
-
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FF0000" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • FDR Format v1.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_IP))
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Username
-                [
-                    "name" => "PERSONA",
-                    "value" => CheckUserName($persona_Name),
-                    "inline" => true
-                ],
-                //Field: Player's Selected Driver ID
-                [
-                    "name" => "PERSONA ID",
-                    "value" => CheckProvidedValue("Persona-ID", $persona_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Event Name
-                [
-                    "name" => "EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
-                    "inline" => true
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: 2 */
-function Json_Format_Version_Two($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FF0000" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • FDR Format v2.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_IP))
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Username
-                [
-                    "name" => "PERSONA",
-                    "value" => CheckUserName($persona_Name),
-                    "inline" => true
-                ],
-                //Field: Player's Selected Driver ID
-                [
-                    "name" => "PERSONA ID",
-                    "value" => CheckProvidedValue("Persona-ID", $persona_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Event Name
-                [
-                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
-                    "inline" => true
-                ],
-                //Field: Car Name
-                [
-                    "name" => "CAR ID",
-                    "value" => CheckProvidedValue("Car-ID", $car_Name, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "LEVEL 1 HWID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "LEVEL 2 HWID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelTwo, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: 3 */
-function Json_Format_Version_Three($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FF0000" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • FDR Format v3.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_IP))
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Username
-                [
-                    "name" => "PERSONA",
-                    "value" => CheckUserName($persona_Name),
-                    "inline" => true
-                ],
-                //Field: Player's Selected Driver ID
-                [
-                    "name" => "PERSONA ID",
-                    "value" => CheckProvidedValue("Persona-ID", $persona_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Event Name
-                [
-                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
-                    "inline" => true
-                ],
-                //Field: Car Name
-                [
-                    "name" => "CAR ID",
-                    "value" => CheckProvidedValue("Car-ID", $car_Name, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: 4 */
-function Json_Format_Version_Four($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FF0000" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • FDR Format v4.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_IP))
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Username
-                [
-                    "name" => "PERSONA",
-                    "value" => CheckUserName($persona_Name),
-                    "inline" => true
-                ],
-                //Field: Player's Selected Driver ID
-                [
-                    "name" => "PERSONA ID",
-                    "value" => CheckProvidedValue("Persona-ID", $persona_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Event Name
-                [
-                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
-                    "inline" => true
-                ],
-                //Field: Car Name
-                [
-                    "name" => "CAR ID",
-                    "value" => CheckProvidedValue("Car-ID", $car_Name, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "DISCORD CLIENT ID",
-                    "value" => CheckProvidedValue("Discord-ID", $discord_ID, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
-}
-/* Version: 4.1 */
-function Json_Format_Version_Four_One($server_IP, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Error, $ac_Footer, $ac_Version, $debug = false)
-{
-    return [
-    /*
-     * The general "message" shown above your embeds
-     */
-    "content" => "",
-    /*
-     * The username shown in the message
-     */
-    "username" => ProfileName($server_IP),
-    /*
-     * The image location for the senders image
-     */
-    "avatar_url" => ProfileIconURL($server_IP).'?'.$ac_Version,
-    /*
-     * Whether or not to read the message in Text-to-speech
-     */
-    "tts" => false,
-    /*
-     * File contents to send to upload a file
-     */
-    // "file" => "",
-    /*
-     * An array of Embeds
-     */
-    "embeds" => [
-        /*
-         * Our first embed
-         */
-        [
-            //Title: Player's Name
-            "title" => "Profile for ".CheckUserName($persona_Name),
-
-            //The type of your embed, will ALWAYS be "rich"
-            "type" => "rich",
-
-            //The User-Agent of the GameLauncher and Operating System's Name
-            "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
-
-            //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_IP, $persona_ID, CheckUserName($persona_Name)),
-
-            /* A timestamp to be displayed below the embed, IE for when an an article was posted
-             * This must be formatted as ISO8601
-             */
-            "timestamp" => gmdate("Y-m-d\TH:i:s\Z"),
-
-            //The integer color to be used on the left side of the embed
-            "color" => hexdec( "FF0000" ),
-
-            //Footer Object: Reporter Footer
-            "footer" => [
-                "text" => "Eagle Jump • ".$ac_Footer." v".$ac_Version." • FDR Format v4.0",
-                "icon_url" => "https://i.eaglejump.org/logos/textless/Eagle%20Jump%20Logo.webp"
-            ],
-            /*
-            //Image Object: Not Used
-            "image" => [
-                "url" => "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-            ],
-            */
-            //Thumbnail Object: Gets Event Image
-            "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_IP))
-            ],
-
-            //Author Object: Server name with Web Site Link
-            "author" => [
-                "name" => ServerName($server_IP),
-                "url" => ServerSiteLink($server_IP)
-            ],
-            // Field array of objects
-            "fields" => [
-                //Field: Cheats
-                [
-                    "name" => "CHEAT",
-                    "value" => CheatType($cheat_Type),
-                    "inline" => false
-                ],
-                //Field: Player's Username
-                [
-                    "name" => "PERSONA",
-                    "value" => CheckUserName($persona_Name),
-                    "inline" => true
-                ],
-                //Field: Player's Selected Driver ID
-                [
-                    "name" => "PERSONA ID",
-                    "value" => CheckProvidedValue("Persona-ID", $persona_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Player's Account ID
-                [
-                    "name" => "USER ID",
-                    "value" => CheckProvidedValue("User-ID", $user_ID, $debug),
-                    "inline" => true
-                ],
-                //Field: Event Name
-                [
-                    "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_IP)),
-                    "inline" => true
-                ],
-                //Field: Car Name
-                [
-                    "name" => "CAR ID",
-                    "value" => CheckProvidedValue("Car-ID", $car_Name, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "HARDWARE ID",
-                    "value" => CheckProvidedValue("HWID", $hwid_LevelOne, $debug),
-                    "inline" => false
-                ],
-                //Field: HWID
-                [
-                    "name" => "DISCORD CLIENT ID",
-                    "value" => CheckProvidedValue("Discord-ID", $discord_ID, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HASH",
-                    "value" => CheckProvidedValue("Hash", $launcher_Hash, $debug),
-                    "inline" => false
-                ],
-                //Field: Hash
-                [
-                    "name" => "LAUNCHER HANDSHAKE",
-                    "value" => CheckProvidedValue("Key", $launcher_Handshake, $debug),
-                    "inline" => false
-                ],
-                //Field: Internal Error Report...Such a shame, they are guaranteed to be banned
-                [
-                    "name" => "INTERNAL ERROR MESSAGE",
-                    "value" => CheckProvidedValue("Internal-Error", $ac_Error, $debug),
-                    "inline" => false
-                ]
-            ]
-        ]
-    ]
-];
+/*
+ * The alert formatting function called by index.php
+ */
+function Json_Format_Version_Alert_One(
+    $serverIp, $futureVersion, $changelog, $footerText, $appVersion, $isDevMode
+) {
+    return PayloadBuilder::createSystemAlert(
+        $serverIp, $futureVersion, $changelog, $footerText, $appVersion, $isDevMode
+    );
 }
 ?>

@@ -1,238 +1,178 @@
 <?php
-function LauncherAllowList($string, $debug = false) 
+
+/**
+ * ReportFormatter
+ * Handles input validation, version checking, and string sanitization
+ * for the anti-cheat report.
+ */
+class ReportFormatter
 {
-    if (!empty($string)) 
-	{
-        //Official (Full Supported Products)
-        if (strpos($string, 'GameLauncher') !== false || strpos($string, 'LegacyLauncher') !== false ||
-            strpos($string, 'SBRW Launcher') !== false || strpos($string, 'SBRW Simple Launcher') !== false || $debug)
-        {
-            return true;
-        }
-        else
-        {
+    // Allowed Launcher User-Agent Substrings
+    private const ALLOWED_LAUNCHERS = [
+        'GameLauncher',
+        'LegacyLauncher',
+        'SBRW Launcher',
+        'SBRW Simple Launcher'
+    ];
+
+    // Characters forbidden in Usernames
+    private const FORBIDDEN_CHARS = ['†', '?', '¤'];
+
+    /**
+     * Checks if the User-Agent string corresponds to an allowed launcher.
+     */
+    public static function isLauncherAllowed(?string $userAgent, bool $debug = false): bool
+    {
+        if (empty($userAgent)) {
             return false;
         }
-    }
-    else
-    {
+
+        if ($debug) {
+            return true;
+        }
+
+        foreach (self::ALLOWED_LAUNCHERS as $launcher) {
+            if (strpos($userAgent, $launcher) !== false) {
+                return true;
+            }
+        }
+
         return false;
     }
+
+    /**
+     * Analyzes the launcher version to determine if cheats were prevented.
+     * Note: This logic relies on legacy version strings.
+     */
+    public static function getLauncherStatus(string $userAgent): string
+    {
+        $parts = explode(" ", $userAgent);
+        $version = $parts[1] ?? '0.0.0.0'; // Default if version missing
+
+        // Logic for GameLauncher
+        if (strpos($userAgent, 'GameLauncher') !== false) {
+            if (version_compare($version, '2.1.6.6', "<=")) {
+                return "*Launcher Did Not Prevent Cheats for this User*";
+            }
+            if (version_compare($version, '2.1.7.8', "<=") || version_compare($version, '3.1.7.7', "==")) {
+                return "*Launcher Prevented Cheats for this User*";
+            }
+            // Newer versions (Alert Level 2)
+            return "**Launcher Prevented Cheats for this User**"; 
+        }
+
+        // Logic for SBRW Launcher (Offset index by 1 due to space in name "SBRW Launcher")
+        if (strpos($userAgent, 'SBRW Launcher') !== false) {
+            $version = $parts[2] ?? '0.0.0.0';
+            if (version_compare($version, '2.1.7.8', "<=") || version_compare($version, '3.1.7.7', "==")) {
+                return "*Launcher Prevented Cheats for this User*";
+            }
+             // Newer versions (Alert Level 2)
+             return "**Launcher Prevented Cheats for this User**";
+        }
+
+        return "Unknown Launcher Status";
+    }
+
+    /**
+     * Sanitizes and Formats specific report fields based on their type.
+     */
+    public static function formatField(string $fieldType, $value, bool $debug = false): ?string
+    {
+        // 1. Handle Debug Mode for Sensitive Fields
+        // In debug mode, we hide HWID/IPs unless it is specifically an error
+        if ($debug && in_array($fieldType, ['HWID', 'IP-Address'])) {
+            return "||HIDDEN||";
+        }
+
+        // 2. Handle Empty/Null Values
+        if (empty($value)) {
+            switch ($fieldType) {
+                case 'Operating-System':
+                    return "**OPERATING SYSTEM**\nNo Information Provided";
+                case 'Operating-Version':
+                    return null; // Skip this field entirely
+                case 'Event-Status':
+                    return 'COMPLETED';
+                case 'Internal-Error':
+                    return "No Base Exception Provided";
+                default:
+                    return "No {$fieldType} Provided";
+            }
+        }
+
+        // 3. Handle Specific Field Formatting
+        switch ($fieldType) {
+            case 'Internal-Error':
+                return "Base Exception: " . $value;
+            
+            case 'Car-ID':
+            case 'Discord-ID':
+            case 'Hash':
+            case 'Key':
+                // Wrap these technical fields in code blocks
+                return "```" . $value . "```";
+            
+            case 'Operating-System':
+                return "**OPERATING SYSTEM**\n" . $value;
+
+            case 'HWID':
+                // Check for valid HWID format (Basic length check based on legacy code)
+                if (strlen($value) > 30) { 
+                    return "||" . $value . "||";
+                }
+                return "Invalid HWID";
+
+            default:
+                // Default sensitive fields (like IP) get spoiler tags
+                return "||" . $value . "||";
+        }
+    }
+
+    /**
+     * Removes forbidden characters from usernames.
+     */
+    public static function sanitizeUserName(string $username): string
+    {
+        if (empty($username)) {
+            return 'Unknown User';
+        }
+
+        // Convert forbidden chars to correct encoding if necessary, or just strip them
+        $cleanName = $username;
+        foreach (self::FORBIDDEN_CHARS as $char) {
+            // Using utf8_encode to match legacy behavior if input encoding was inconsistent
+            $target = utf8_encode($char); 
+            $cleanName = str_replace($target, '', $cleanName);
+        }
+
+        return $cleanName;
+    }
 }
 
-/* Launcher's Version Comparison (String Check: Alert-Status) */
+/* -------------------------------------------------------------------------
+ * Legacy Wrapper Functions
+ * -------------------------------------------------------------------------
+ * Maintains backward compatibility with index.php
+ */
+
+function LauncherAllowList($string, $debug = false) 
+{
+    return ReportFormatter::isLauncherAllowed($string, $debug);
+}
+
 function AlertStatusReportVersion($string, $debug = false)
 {
-    try
-    {
-        if(strpos($string, 'GameLauncher') !== false)
-        {
-                $version_split = explode(" ", $string);
-                /* Version 1 */
-                if(version_compare($version_split[1], '2.1.6.6', "<="))
-                {
-                    return "*Launcher Did Not Prevent Cheats for this User*";
-                }
-                elseif(version_compare($version_split[1], '2.1.7.8', "<=") || version_compare($version_split[1], '3.1.7.7', "=="))
-                {
-                    return "*Launcher Prevented Cheats for this User*";
-                }
-                /* Version 2 */
-                elseif(version_compare($version_split[1], '2.1.8.8', "<="))
-                {
-                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
-                }
-                /* Version 3 */
-                elseif(version_compare($version_split[1], '2.1.9.0002', "<="))
-                {
-                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
-                }
-                /* Version 4 */
-                else
-                {
-                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
-                }
-        }
-        elseif(strpos($string, 'SBRW Launcher') !== false)
-        {
-                $version_split = explode(" ", $string);
-                /* Version 1 */
-                if(version_compare($version_split[2], '2.1.6.6', "<="))
-                {
-                    return "*Launcher Did Not Prevent Cheats for this User*";
-                }
-                elseif(version_compare($version_split[2], '2.1.7.8', "<=") || version_compare($version_split[2], '3.1.7.7', "=="))
-                {
-                    return "*Launcher Prevented Cheats for this User*";
-                }
-                /* Version 2 */
-                elseif(version_compare($version_split[2], '2.1.8.8', "<="))
-                {
-                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
-                }
-                /* Version 3 */
-                elseif(version_compare($version_split[2], '2.1.9.0002', "<="))
-                {
-                    return "*After 1 Minute of a Detection\nLauncher Prevented Cheats for this User*";
-                }
-                /* Version 4 */
-                else
-                {
-                    return "*After 2 Minutes of a Detection\nLauncher Prevented Cheats for this User*";
-                }
-        }
-        elseif(strpos($string, 'LegacyLauncher') !== false)
-        {
-            $version_split = explode(" ", $string);
-            if(count($version_split) > 0)
-            {
-                $version_split = explode(" ", $string);
-                /* Version -1 */
-                if(version_compare($version_split[1], '1.0.5.0', "<="))
-                {
-                    return "*Launcher Did Not Prevent Cheats for this User*";
-                }
-                /* Version 1 */
-                else
-                {
-                    return "*Launcher Prevented Cheats for this User*";
-                }
-            }
-            /* Version -1 */
-            else
-            {
-                return "*Launcher **May Have** Prevented Cheats for this User*";
-            }
-        }
-        elseif($debug == true)
-        {
-            /* Just a Debug Report, Its Safe to Disregard this */
-            return "Woah! You are not Shotaro Tokuno!\nAnyhow, this is a Mock Debug Report";
-        }
-        else
-        {
-            /* Generic Response */
-            return 'Unknown Details about the Launcher';
-        }
-    }
-    catch (Exception $on_the_fly_error)
-    {
-        return 'Unknown Server Report Error';
-    }
+    return ReportFormatter::getLauncherStatus($string);
 }
 
-function CheckProvidedValue($string, $value, $debug = false) 
+function CheckProvidedValue($type, $value, $debug = false)
 {
-    if (!empty($value))
-	{
-        if($string == "User-Agent")
-        {
-            if (LauncherAllowList($value, $debug))
-            {
-                if($debug)
-                {
-                    return "**LAUNCHER VERSION**\nDebug Report Only";
-                }
-                else
-                {
-                    return "**LAUNCHER VERSION**\n".$value;
-                }
-            }
-            else
-            {
-                return "**INVALID REPORT**\nWeb Browser";
-            }
-        }
-        else if($string == "Alert-Status")
-        {
-            return AlertStatusReportVersion($value, $debug);
-        }
-        else if($string == "User-ID" || $string == "Persona-ID" ||
-                $string == "Car-ID") 
-		{
-            return $value;
-        }
-        else if($string == "Operating-System")
-        {
-            return "**OPERATING SYSTEM**\n".$value;
-        }
-        else if($string == "Operating-Version")
-        {
-            return ' ('.$value.')';
-        }
-        else if ($string == "Event-Status")
-        {
-            if(strtolower($value) == "true")
-            {
-                return 'COMPLETED';
-            }
-            else
-            {
-                return 'QUIT';
-            }
-        }
-        else if ($string == "Internal-Error")
-        {
-            return "Base Exception: ".$value;
-        }
-        else 
-		{
-            return "||".$value."||";
-        }
-    }
-    else 
-	{
-        if($string == "Operating-System")
-        {
-            return "**OPERATING SYSTEM**\nNo Information Provided";
-        }
-        else if($string == "Operating-Version")
-        {
-            return NULL;
-        }
-        else if ($string == "Event-Status")
-        {
-            return 'COMPLETED';
-        }
-        else if ($string == "Internal-Error")
-        {
-            return "No Base Exception Provided";
-        }
-        else
-        {
-            return 'No '.$string.' Provided';
-        }
-    }
+    return ReportFormatter::formatField($type, $value, $debug);
 }
 
 function CheckUserName($string) 
 {        
-    if (!empty($string))
-	{
-        if(strpos($string, utf8_encode('†')) !== false) 
-		{
-            return str_replace(utf8_encode('†'), '', $string);
-        }
-        elseif(strpos($string, utf8_encode('?')) !== false) 
-		{
-            return str_replace(utf8_encode('?'), '', $string);
-        }
-        elseif(strpos($string, utf8_encode('¤')) !== false) 
-		{
-            return str_replace(utf8_encode('¤'), '', $string);
-        }
-        elseif(strpos($string, utf8_encode('[S]')) !== false) 
-		{
-            return str_replace(utf8_encode('[S]'), '', $string);
-        }
-        else 
-		{
-            return $string;
-        }
-    }
-    else
-	{
-        return 'Username is Null';
-    }
+    return ReportFormatter::sanitizeUserName($string);
 }
 ?>
