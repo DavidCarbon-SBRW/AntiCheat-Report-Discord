@@ -168,7 +168,7 @@ class StringChecker
         switch ($fieldType) 
         {
             case 'Alert-Status':
-                return getLauncherStatus($value, $debug);
+                return self::getLauncherStatus($value, $debug);
             case 'Internal-Error':
                 return "Base Exception: " . $value;
             case 'Car-ID':
@@ -187,6 +187,22 @@ class StringChecker
                 else
                 {
                     return 'QUIT';
+                }
+            case 'User-Agent':
+                if (self::getLauncherStatus($value, $debug))
+                {
+                    if($debug)
+                    {
+                        return "**LAUNCHER VERSION**\nDebug Report Only";
+                    }
+                    else
+                    {
+                        return "**LAUNCHER VERSION**\n".$value;
+                    }
+                }
+                else
+                {
+                    return "**INVALID REPORT**\nWeb Browser";
                 }
             default:
                 // Default sensitive fields (like HWID) get spoiler tags

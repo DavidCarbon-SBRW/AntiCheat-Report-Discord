@@ -29,7 +29,7 @@ parse_str(utf8_encode($url_components['query']), $params);
 
 $development_live = true;
 //Anti-Cheat Reporting Service Footer
-$development = true;
+$development = false;
 //Anti-Cheat Reporting Service Build Number
 $version = "2.8.a";
 //Anti-Cheat Reporting Service Footer
