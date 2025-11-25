@@ -31,7 +31,7 @@ $development_live = true;
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.8.a";
+$version = "2.8.b";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anti-Cheat Reporter";
 //
@@ -97,7 +97,7 @@ if((!empty($params['report_format']) || LauncherAllowList($_SERVER['HTTP_USER_AG
         $reportFormat = FailSafeReportVersionFormat($_SERVER['HTTP_USER_AGENT'], $development);
     }
     
-    $serverConfig = ServerRegistry::get($serverIp);
+    $serverConfig = ServerRegistry::get($params['serverip']);
     
     if($reportFormat == -1)
     {
