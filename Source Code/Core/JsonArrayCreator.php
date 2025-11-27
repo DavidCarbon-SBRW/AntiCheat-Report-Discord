@@ -101,7 +101,16 @@ function FailSafeReportVersionFormat($string, $debug = false, $debug_version = 0
     }
 }
 
-/** Alerts **/
+/**
+ * DiscordWebhook
+ * Assembles the Discord Webhook JSON arrays for different report types.
+ */
+class DiscordWebhook
+{
+    /** Alerts **/
+}
+
+
 
 /* Version: 1 */
 function Json_Format_Version_Alert_One($server_Data, $future_Version, $changelog_Message, $ac_Footer, $ac_Version, $debug = false)
@@ -309,7 +318,7 @@ function Json_Format_Version_Negative_Four_One($server_Data, $user_ID, $cheat_Ty
 ];
 }
 /* Version: -4 */
-function Json_Format_Version_Negative_Four($server_Data, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Negative_Four($server_$server_DataData, $user_ID, $cheat_Type, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -323,7 +332,7 @@ function Json_Format_Version_Negative_Four($server_Data, $user_ID, $cheat_Type, 
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -351,7 +360,7 @@ function Json_Format_Version_Negative_Four($server_Data, $user_ID, $cheat_Type, 
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
             /*
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
             */
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -379,8 +388,8 @@ function Json_Format_Version_Negative_Four($server_Data, $user_ID, $cheat_Type, 
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -432,7 +441,7 @@ function Json_Format_Version_Negative_Four($server_Data, $user_ID, $cheat_Type, 
 ];
 }
 /* Version: -3*/
-function Json_Format_Version_Negative_Three($server_Config, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Negative_Three($server_Data, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -442,11 +451,11 @@ function Json_Format_Version_Negative_Three($server_Config, $user_ID, $cheat_Typ
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -474,7 +483,7 @@ function Json_Format_Version_Negative_Three($server_Config, $user_ID, $cheat_Typ
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
             /*
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
             */
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -502,8 +511,8 @@ function Json_Format_Version_Negative_Three($server_Config, $user_ID, $cheat_Typ
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -549,7 +558,7 @@ function Json_Format_Version_Negative_Three($server_Config, $user_ID, $cheat_Typ
 ];
 }
 /* Version: -2 */
-function Json_Format_Version_Negative_Two($server_Config, $user_ID, $cheat_Type, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Negative_Two($server_Data, $user_ID, $cheat_Type, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -559,11 +568,11 @@ function Json_Format_Version_Negative_Two($server_Config, $user_ID, $cheat_Type,
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -591,7 +600,7 @@ function Json_Format_Version_Negative_Two($server_Config, $user_ID, $cheat_Type,
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
             /*
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
             */
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -619,8 +628,8 @@ function Json_Format_Version_Negative_Two($server_Config, $user_ID, $cheat_Type,
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -672,7 +681,7 @@ function Json_Format_Version_Negative_Two($server_Config, $user_ID, $cheat_Type,
 ];
 }
 /* Version: -1 */
-function Json_Format_Version_Negative_One($server_Config, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Negative_One($server_Data, $user_ID, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -682,11 +691,11 @@ function Json_Format_Version_Negative_One($server_Config, $user_ID, $cheat_Type,
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -714,7 +723,7 @@ function Json_Format_Version_Negative_One($server_Config, $user_ID, $cheat_Type,
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug),
             /*
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
             */
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -742,8 +751,8 @@ function Json_Format_Version_Negative_One($server_Config, $user_ID, $cheat_Type,
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -780,7 +789,7 @@ function Json_Format_Version_Negative_One($server_Config, $user_ID, $cheat_Type,
 /** Full Detailed Report **/
 
 /* Version: 1 */
-function Json_Format_Version_One($server_Config, $user_ID, $persona_Name, $persona_ID, $event_Session, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_One($server_Data, $user_ID, $persona_Name, $persona_ID, $event_Session, $cheat_Type, $hwid_LevelOne, $launcher_UserAgent, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -790,11 +799,11 @@ function Json_Format_Version_One($server_Config, $user_ID, $persona_Name, $perso
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -821,7 +830,7 @@ function Json_Format_Version_One($server_Config, $user_ID, $persona_Name, $perso
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug),
 
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -844,13 +853,13 @@ function Json_Format_Version_One($server_Config, $user_ID, $persona_Name, $perso
             */
             //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Config))
+                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Data))
             ],
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -881,7 +890,7 @@ function Json_Format_Version_One($server_Config, $user_ID, $persona_Name, $perso
                 //Field: Event Name
                 [
                     "name" => "EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Config)),
+                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Data)),
                     "inline" => true
                 ],
                 //Field: HWID
@@ -896,7 +905,7 @@ function Json_Format_Version_One($server_Config, $user_ID, $persona_Name, $perso
 ];
 }
 /* Version: 2 */
-function Json_Format_Version_Two($server_Config, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Two($server_Data, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $hwid_LevelTwo, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -906,11 +915,11 @@ function Json_Format_Version_Two($server_Config, $user_ID, $persona_Name, $perso
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -937,7 +946,7 @@ function Json_Format_Version_Two($server_Config, $user_ID, $persona_Name, $perso
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
 
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -960,13 +969,13 @@ function Json_Format_Version_Two($server_Config, $user_ID, $persona_Name, $perso
             */
             //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Config))
+                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Data))
             ],
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -997,7 +1006,7 @@ function Json_Format_Version_Two($server_Config, $user_ID, $persona_Name, $perso
                 //Field: Event Name
                 [
                     "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Config)),
+                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Data)),
                     "inline" => true
                 ],
                 //Field: Car Name
@@ -1036,7 +1045,7 @@ function Json_Format_Version_Two($server_Config, $user_ID, $persona_Name, $perso
 ];
 }
 /* Version: 3 */
-function Json_Format_Version_Three($server_Config, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Three($server_Data, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -1046,11 +1055,11 @@ function Json_Format_Version_Three($server_Config, $user_ID, $persona_Name, $per
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -1077,7 +1086,7 @@ function Json_Format_Version_Three($server_Config, $user_ID, $persona_Name, $per
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
 
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -1100,13 +1109,13 @@ function Json_Format_Version_Three($server_Config, $user_ID, $persona_Name, $per
             */
             //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Config))
+                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Data))
             ],
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -1137,7 +1146,7 @@ function Json_Format_Version_Three($server_Config, $user_ID, $persona_Name, $per
                 //Field: Event Name
                 [
                     "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Config)),
+                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Data)),
                     "inline" => true
                 ],
                 //Field: Car Name
@@ -1170,7 +1179,7 @@ function Json_Format_Version_Three($server_Config, $user_ID, $persona_Name, $per
 ];
 }
 /* Version: 4 */
-function Json_Format_Version_Four($server_Config, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Four($server_Data, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -1180,11 +1189,11 @@ function Json_Format_Version_Four($server_Config, $user_ID, $persona_Name, $pers
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -1211,7 +1220,7 @@ function Json_Format_Version_Four($server_Config, $user_ID, $persona_Name, $pers
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
 
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -1234,13 +1243,13 @@ function Json_Format_Version_Four($server_Config, $user_ID, $persona_Name, $pers
             */
             //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Config))
+                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Data))
             ],
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -1271,7 +1280,7 @@ function Json_Format_Version_Four($server_Config, $user_ID, $persona_Name, $pers
                 //Field: Event Name
                 [
                     "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Config)),
+                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Data)),
                     "inline" => true
                 ],
                 //Field: Car Name
@@ -1310,7 +1319,7 @@ function Json_Format_Version_Four($server_Config, $user_ID, $persona_Name, $pers
 ];
 }
 /* Version: 4.1 */
-function Json_Format_Version_Four_One($server_Config, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Error, $ac_Footer, $ac_Version, $debug = false)
+function Json_Format_Version_Four_One($server_Data, $user_ID, $persona_Name, $persona_ID, $event_Session, $event_CompletionStatus, $cheat_Type, $car_Name, $hwid_LevelOne, $discord_ID, $launcher_Hash, $launcher_Handshake, $launcher_UserAgent, $platform_OS, $version_OS, $ac_Error, $ac_Footer, $ac_Version, $debug = false)
 {
     return [
     /*
@@ -1320,11 +1329,11 @@ function Json_Format_Version_Four_One($server_Config, $user_ID, $persona_Name, $
     /*
      * The username shown in the message
      */
-    "username" => ProfileName($server_Config),
+    "username" => ProfileName($server_Data),
     /*
      * The image location for the senders image
      */
-    "avatar_url" => ProfileIconURL($server_Config).'?'.$ac_Version,
+    "avatar_url" => ProfileIconURL($server_Data).'?'.$ac_Version,
     /*
      * Whether or not to read the message in Text-to-speech
      */
@@ -1351,7 +1360,7 @@ function Json_Format_Version_Four_One($server_Config, $user_ID, $persona_Name, $
             "description" => CheckProvidedValue("User-Agent", $launcher_UserAgent, $debug)."\n".CheckProvidedValue("Operating-System", $platform_OS, $debug).CheckProvidedValue("Operating-Version", $version_OS, $debug),
 
             //The URL of the Player on a Player Panel if available
-            "url" => PlayerPanel($server_Config, $persona_ID, CheckUserName($persona_Name)),
+            "url" => PlayerPanel($server_Data, $persona_ID, CheckUserName($persona_Name)),
 
             /* A timestamp to be displayed below the embed, IE for when an an article was posted
              * This must be formatted as ISO8601
@@ -1374,13 +1383,13 @@ function Json_Format_Version_Four_One($server_Config, $user_ID, $persona_Name, $
             */
             //Thumbnail Object: Gets Event Image
             "thumbnail" => [
-                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Config))
+                "url" => GetEventImageFromFile($event_Session, EventListLink($server_Data))
             ],
 
             //Author Object: Server name with Web Site Link
             "author" => [
-                "name" => ServerName($server_Config),
-                "url" => ServerSiteLink($server_Config)
+                "name" => ServerName($server_Data),
+                "url" => ServerSiteLink($server_Data)
             ],
             // Field array of objects
             "fields" => [
@@ -1411,7 +1420,7 @@ function Json_Format_Version_Four_One($server_Config, $user_ID, $persona_Name, $
                 //Field: Event Name
                 [
                     "name" => CheckProvidedValue("Event-Status", $event_CompletionStatus, $debug)." EVENT ID",
-                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Config)),
+                    "value" => GetEventNameFromFile($event_Session, EventListLink($server_Data)),
                     "inline" => true
                 ],
                 //Field: Car Name
