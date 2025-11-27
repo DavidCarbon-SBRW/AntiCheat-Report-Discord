@@ -53,7 +53,7 @@ function ProfileIconURL($server_Data)
 /* Sets Name for certain servers */
 function ProfileName($server_Data)
 {;
-    return $server_Data['profile_name'];
+    return $server_Data['username'];
 }
 
 /**
@@ -130,13 +130,13 @@ class ServerRegistry
             'username' => 'Rin: Anti-Cheat'
         ],
         'nightriderz_lab' => [
-            'identifiers' => ['thelab.nightriderz.world', '89.234.180.231'],
+            'identifiers' => ['thelab.nightriderz.world', '89.234.180.231', 'core.thelab.nightriderz.world'],
             'webhooks' => [
                 'full_details'   => 'https://discord.com/api/webhooks/',
                 'user_id_details' => 'https://discord.com/api/webhooks/'
             ],
             'name'         => 'NIGHTRIDERZ: The lab',
-            'site'         => 'https://nightriderz.world',
+            'site'         => 'https://core.thelab.nightriderz.world',
             'event_json'   => 'https://davidcarbon-sbrw.github.io/AntiCheat-Report-Discord/JSON/Events/NightRiderz.json',
             'panel'        => ['url' => 'https://nightriderz.world', 'persona_type' => 'static'],
             'avatar_url'         => 'https://i.eaglejump.org/team/Rin%20Toyama.webp',
@@ -236,9 +236,18 @@ class ServerRegistry
             }
             return $finalConfig;
         }
-
-        // 3. Fallback
-        return self::$defaultConfig;
+        else
+        {
+            // 3. Fallback
+            $unknownServerConfig = [
+                'name'         => ($string == null ? 'Unknown Server' : $string)
+            ];
+            
+            // Explicitly set serverIP as default
+            $finalConfig = array_merge(self::$defaultConfig, $unknownServerConfig);
+            
+            return $finalConfig;
+        }
     }
 }
 ?>

@@ -31,7 +31,7 @@ $development_live = true;
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.8.b";
+$version = "2.8.c";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anti-Cheat Reporter";
 //
@@ -183,6 +183,7 @@ try
     }
     else
     {
+        http_response_code(400);
         // Display result 
         echo 'Forbidden'; 
     }
