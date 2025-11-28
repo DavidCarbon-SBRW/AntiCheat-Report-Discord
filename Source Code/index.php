@@ -31,7 +31,7 @@ $development_live = true;
 //Anti-Cheat Reporting Service Footer
 $development = false;
 //Anti-Cheat Reporting Service Build Number
-$version = "2.8.c";
+$version = "2.8.e";
 //Anti-Cheat Reporting Service Footer
 $footer = "Anti-Cheat Reporter";
 //
@@ -44,6 +44,8 @@ $reportFormat = 0;
 $alertPasscode = "DEFAULT_PASS_CODE";
 /* No Report, Throw an Error */
 $forbiddenError = false;
+//Fix Retrival of Client OS Version (If Launcher doesn't provide it)
+$clientOSVersion = StringChecker::getOS();
 
 if(!empty($params['alert_mode']) && !empty($params['alert_access_code']))
 {
@@ -109,35 +111,35 @@ if((!empty($params['report_format']) || LauncherAllowList($_SERVER['HTTP_USER_AG
     }
     elseif($reportFormat == -2)
     {
-        $formattedArray = Json_Format_Version_Negative_Two($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['hwid_fallback'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Negative_Two($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['hwid_fallback'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $footer, $version, $development);
     }
     elseif($reportFormat == 2)
     {
-        $formattedArray = Json_Format_Version_Two($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['hwid_fallback'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Two($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['hwid_fallback'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $footer, $version, $development);
     }
     elseif($reportFormat == -3)
     {
-        $formattedArray = Json_Format_Version_Negative_Three($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Negative_Three($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $footer, $version, $development);
     }
     elseif($reportFormat == 3)
     {
-        $formattedArray = Json_Format_Version_Three($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Three($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $footer, $version, $development);
     }
     elseif($reportFormat == -4)
     {
-        $formattedArray = Json_Format_Version_Negative_Four($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Negative_Four($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $footer, $version, $development);
     }
     elseif($reportFormat == 4)
     {
-        $formattedArray = Json_Format_Version_Four($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Four($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $footer, $version, $development);
     }
     elseif($reportFormat == -4.1)
     {
-        $formattedArray = Json_Format_Version_Negative_Four_One($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $params['ac_ie'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Negative_Four_One($serverConfig, $params['user_id'], $params['cheat_type'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $params['ac_ie'], $footer, $version, $development);
     }
     elseif($reportFormat == 4.1)
     {
-        $formattedArray = Json_Format_Version_Four_One($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $_SERVER['HTTP_OS_VERSION'], $params['ac_ie'], $footer, $version, $development);
+        $formattedArray = Json_Format_Version_Four_One($serverConfig, $params['user_id'], $params['persona_name'], $params['persona_id'], $params['event_session'], $params['event_status'], $params['cheat_type'], $params['car_used'], $params['hwid'], $params['discord_user_id'], $params['launcher_hash'], $params['launcher_certificate'], $_SERVER['HTTP_USER_AGENT'], $params['os_platform'], $clientOSVersion, $params['ac_ie'], $footer, $version, $development);
     }
     else
     {
